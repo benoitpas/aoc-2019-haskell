@@ -5,5 +5,17 @@ I discovered Haskell by following  the course [Introduction to functional progra
 
 What's better than trying to do the advent of code in the language ?
 
+To run the tests, simply use:
+```
+$ stack test
+```
+
+To get the results for a given day, use the repl:
+```
+$ stack repl
+ghci> Day1.run
+3265923
+```
+
 # Day 1
 This was mostly about setting up the environment and understanding how to use the unit test framework (which I didn't learn about in the course)
