@@ -14,4 +14,6 @@ run = do
     content <- readFile "src/day1_input.txt"
     let numbers = (map read (lines content))  :: [Int]
     let s1 =  sum (map fuel1 numbers)
-    putStrLn (show s1)
+    putStrLn ("puzzle 1: " ++ (show s1))
+    let s2 =  sum (map fuel2 numbers)
+    putStrLn ("puzzle 2: " ++ (show s2))

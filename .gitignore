@@ -1,2 +1,4 @@
+.stack-work/
 *.cabal
 package.yaml 
+stack.yaml.lock
