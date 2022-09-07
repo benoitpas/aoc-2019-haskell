@@ -1,5 +1,8 @@
 module Day2
-    ( run, wordsWhen, str2array
+    (
+        run,
+        wordsWhen, list2array, str2array,
+        nextStep
     ) where
 
 import Data.Array
@@ -10,13 +13,21 @@ wordsWhen p s =  case dropWhile p s of
                       s' -> w : wordsWhen p s''
                             where (w, s'') = break p s'
 
-str2array:: String -> Array Int Int
+list2array :: Ix i => [i] -> Array Int i
+list2array lst = listArray (0,(length lst) - 1) lst
+
+str2array :: String -> Array Int Int
 str2array s = 
-    let strings = map read (wordsWhen (==',') s) in
-    listArray (0,(length strings) - 1) strings
+    let ints = map read (wordsWhen (==',') s) in
+    list2array ints
 
 nextStep :: ((Array Int Int),Int) -> ((Array Int Int),Int)
-nextStep (program,index) = (program ,index)
+nextStep (program,index) = case (program ! index) of
+    1  -> let a = program ! (program ! (index + 1)) in
+          let b = program ! (program ! (index + 2)) in
+        (program // [(program ! (index + 3), a + b)], index + 4)
+    2  -> (program, index + 4)
+    99 -> (program, -1)
 
 run :: IO ()
 run = do
