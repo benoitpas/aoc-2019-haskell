@@ -18,3 +18,5 @@ spec = do
             (nextStep (list2array [99], 0)) `shouldBe` (list2array [99], -1)
         it "processes an addition" $ do
             (nextStep (list2array [1,0,0,0], 0)) `shouldBe` (list2array [2,0,0,0], 4)
+        it "processes a multiplication" $ do
+            (nextStep (list2array [2,3,0,3,99], 0)) `shouldBe` (list2array [2,3,0,6,99], 4)

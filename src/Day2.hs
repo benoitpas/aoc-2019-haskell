@@ -22,12 +22,16 @@ str2array s =
     list2array ints
 
 nextStep :: ((Array Int Int),Int) -> ((Array Int Int),Int)
-nextStep (program,index) = case (program ! index) of
-    1  -> let a = program ! (program ! (index + 1)) in
-          let b = program ! (program ! (index + 2)) in
-        (program // [(program ! (index + 3), a + b)], index + 4)
-    2  -> (program, index + 4)
-    99 -> (program, -1)
+nextStep (program,index) = 
+    case (program ! index) of
+        1  -> process (+)
+        2  -> process (*)
+        99 -> (program, -1)
+    where
+        process op =
+            let a = (program ! (program ! (index + 1))) in
+            let b = (program ! (program ! (index + 2))) in
+                (program // [(program ! (index + 3), a `op` b)], index + 4)
 
 run :: IO ()
 run = do
