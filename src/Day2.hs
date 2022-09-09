@@ -1,7 +1,7 @@
 module Day2
     (
         run,
-        wordsWhen, list2array, str2array,
+        wordsWhen, list2array, str2array, allSteps,
         nextStep
     ) where
 
@@ -26,15 +26,19 @@ nextStep (program,index) =
     case (program ! index) of
         1  -> process (+)
         2  -> process (*)
-        99 -> (program, -1)
+        _ -> (program, -1 - index)
     where
         process op =
             let a = (program ! (program ! (index + 1))) in
             let b = (program ! (program ! (index + 2))) in
                 (program // [(program ! (index + 3), a `op` b)], index + 4)
 
+allSteps :: ((Array Int Int),Int) -> ((Array Int Int),Int)
+allSteps (program,index) = last ((takeWhile (\(program,index) -> index >= 0) (iterate nextStep (program,index))))
+
 run :: IO ()
 run = do
     content <- readFile "src/day2_input.txt"
     let program = str2array (head (lines content))
-    print program
+    let fixedProgram = program // [(1,12),(2,2)]
+    print (allSteps (fixedProgram,0))
