@@ -1,7 +1,6 @@
 module Day2Spec (spec) where
 
 import Test.Hspec
-import Data.Array
 import Day2
 
 spec :: Spec

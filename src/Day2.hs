@@ -22,23 +22,24 @@ str2array s =
     list2array ints
 
 nextStep :: ((Array Int Int),Int) -> ((Array Int Int),Int)
-nextStep (program,index) = 
-    case (program ! index) of
+nextStep (program, idx) = 
+    case (program ! idx) of
         1  -> process (+)
         2  -> process (*)
-        _ -> (program, -1 - index)
+        _ -> (program, -1 - idx)
     where
         process op =
-            let a = (program ! (program ! (index + 1))) in
-            let b = (program ! (program ! (index + 2))) in
-                (program // [(program ! (index + 3), a `op` b)], index + 4)
+            let a = (program ! (program ! (idx + 1))) in
+            let b = (program ! (program ! (idx + 2))) in
+                (program // [(program ! (idx + 3), a `op` b)], idx + 4)
 
 allSteps :: ((Array Int Int),Int) -> ((Array Int Int),Int)
-allSteps (program,index) = last ((takeWhile (\(program,index) -> index >= 0) (iterate nextStep (program,index))))
+allSteps (program, idx) = last ((takeWhile (\(_,i) -> i >= 0) (iterate nextStep (program, idx))))
 
 run :: IO ()
 run = do
     content <- readFile "src/day2_input.txt"
     let program = str2array (head (lines content))
     let fixedProgram = program // [(1,12),(2,2)]
-    print (allSteps (fixedProgram,0))
+    let p1 = fst (allSteps (fixedProgram,0)) ! 0
+    print ("puzzle 1: " ++ show p1)
