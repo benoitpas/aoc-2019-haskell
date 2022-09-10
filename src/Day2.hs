@@ -36,10 +36,24 @@ nextStep (program, idx) =
 allSteps :: ((Array Int Int),Int) -> ((Array Int Int),Int)
 allSteps (program, idx) = last ((takeWhile (\(_,i) -> i >= 0) (iterate nextStep (program, idx))))
 
+runProgram :: (Array Int Int) -> Int -> Int -> Int
+runProgram memory noun verb = 
+    let memory2 = memory // [(1, noun), (2, verb)] in
+    fst (allSteps (memory2,0)) ! 0
+
+findOutput :: (Array Int Int) -> Int -> Int 
+findOutput memory output =
+    let solutions = [(noun,verb) | noun <- [0..99], verb <- [0..99], runProgram memory noun verb == output] in
+    case solutions of
+        [(noun,verb)] -> 100 * noun + verb
+        _ -> 0
+
+
 run :: IO ()
 run = do
     content <- readFile "src/day2_input.txt"
-    let program = str2array (head (lines content))
-    let fixedProgram = program // [(1,12),(2,2)]
-    let p1 = fst (allSteps (fixedProgram,0)) ! 0
+    let memory = str2array (head (lines content))
+    let p1 = runProgram memory 12 2
     print ("puzzle 1: " ++ show p1)
+    let p2 = findOutput memory 19690720
+    print ("puzzle 2: " ++ show p2)
