@@ -1,0 +1,22 @@
+name: aoc2019
+version: 0.0.1
+license: MIT
+copyright: (c) 2022 Benoit Pasquereau
+author: Benoit Pasquereau
+
+ghc-options: -Wall
+
+dependencies:
+ - base == 4.*
+ - array == 0.5.4.0
+ - containers == 0.6.4.1
+ - sort == 1.0.0.0
+ - unordered-containers == 0.2.*
+
+library:
+  source-dirs: src
+
+tests:
+  spec:
+    defaults: hspec/hspec@main
+    dependencies: aoc2019

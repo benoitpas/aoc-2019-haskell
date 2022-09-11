@@ -19,3 +19,11 @@ ghci> Day1.run
 
 # Day 1
 This was mostly about setting up the environment and understanding how to use the unit test framework (which I didn't learn about in the course)
+
+# Day 2
+Here I mostly learnt how to use Array in Haskell, no issues with this puzzle. Compared to the Scala version (https://github.com/benoitpas/Advent-of-Code-2019/blob/master/src/main/scala/Day2.scala), it is a bit more verbose because of the array syntax (and I a lot more comfortable with Scala so the Haskell version can probably be improved a lot).
+
+# Day 3
+Here things start to get interested, the first solution I implemented does noy finish with the full scale puzzle. Without looking at it, I created a solution very similar to https://github.com/benoitpas/Advent-of-Code-2019/blob/master/src/main/scala/Day3.scala where I first create a list of points and convert it to a set to find the intersection.
+
+For the first list (around 150000 elements), the conversion from List to Set does not finish after running for more than a minute.
