@@ -27,3 +27,22 @@ Here I mostly learnt how to use Array in Haskell, no issues with this puzzle. Co
 Here things start to get interested, the first solution I implemented does noy finish with the full scale puzzle. Without looking at it, I created a solution very similar to https://github.com/benoitpas/Advent-of-Code-2019/blob/master/src/main/scala/Day3.scala where I first create a list of points and convert it to a set to find the intersection.
 
 For the first list (around 150000 elements), the conversion from List to Set does not finish after running for more than a minute.
+Looking into the [documentation](https://hackage.haskell.org/package/containers-0.6.6/docs/Data-Set.html), it turns out that balanced binary trees. It is probably better to use a [HashSet](https://hackage.haskell.org/package/unordered-containers-0.2.19.1/docs/Data-HashSet.html) instead.
+
+Using the HashSet did not make much difference, so investigating how long it takes to convert a 10000, then 20000 and up to 50000 points list to set, it turns out there is also a memory issue.
+
+When running Day3 with the following parameters, the solution is found in around 23 minutes:
+```
+stack repl --ghci-options="+RTS -M4095m -K4095m -RTS"
+ghci> :set +s 
+ghci> Day3.run
+"puzzle 1:806"
+(1404.46 secs, 3,139,229,792 bytes)
+```
+
+Out of curiosity I tried with a binary tree set and the time taken is in the same order of magniture:
+```
+(1393.68 secs, 3,103,167,544 bytes)
+```
+
+It probably makes sense to use smarter algorithm that calculate the segments intersections without generating all the points ;-).

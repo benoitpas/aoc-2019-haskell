@@ -4,9 +4,10 @@ module Day3
         run
     ) where
 
+import qualified Data.Set as Set
 import qualified Data.Map.Strict as M
-import qualified Data.HashSet as Set
 import Data.Sort
+import Data.Time.Clock
 
 import Day2 hiding (run)
 
@@ -40,16 +41,16 @@ run :: IO ()
 run = let w1 = wiresStrings !! 0 in
     let w2 = wiresStrings !! 1 in
     do
-        let p1 = points w1
-        print (show (length(p1)))
-        let s1 = Set.fromList p1
-        print (show (length(s1)))
-        let p2 = points w2
-        print (show (length(p2)))
-        let s2 = Set.fromList p2
-        print (show (length(s2)))
-        let i = Set.intersection s1 s2
-        print (show (length(i)))
+--        let p1 = take 40000 (points w1)
+--        print (show (length(p1)))
+--        let s1 = Set.fromList p1
+--        print (show (length(s1)))
+--        let p2 = points w2
+--        print (show (length(p2)))
+--        let s2 = Set.fromList p2
+--        print (show (length(s2)))
+--        let i = Set.intersection s1 s2
+--        print (show (length(i)))
         
 --        print ("puzzle 1:" ++ show (length (points w1)))
-        print ("puzzle 1:" ++ show (intersection w1 w2))
+        print ("puzzle 1:" ++ show (distance w1 w2))
