@@ -46,3 +46,11 @@ Out of curiosity I tried with a binary tree set and the time taken is in the sam
 ```
 
 It probably makes sense to use smarter algorithm that calculate the segments intersections without generating all the points ;-).
+
+And it turns out to be a lots more efficient too:
+
+```
+ghci> Day3.run
+"puzzle 1:806"
+(0.00 secs, 370,480 bytes)
+```

@@ -12,6 +12,7 @@ dependencies:
  - containers == 0.6.4.1
  - sort == 1.0.0.0
  - unordered-containers == 0.2.*
+ - time == 1.9.3
 
 library:
   source-dirs: src

@@ -1,6 +1,6 @@
 module Day3
     (
-        points, intersection, distance,
+        segments, normalize, intersection, intersections,
         run
     ) where
 
@@ -26,31 +26,38 @@ direction d = case head d of
 steps :: String -> Int
 steps s = ( read (tail s)) :: Int
 
-points :: String -> [(Int,Int)]
-points wire =
+segments :: String -> [((Int,Int),(Int,Int))]
+segments wire =
     let moves = ((wordsWhen (==',')) wire) in
-    foldl (\a -> \d -> a ++ [(fst (last a) + i * fst (direction d), snd (last a) + i * snd (direction d) ) | i <- [1..steps d]]) [(0,0)] moves
+    let next acc dir =
+            let inc = direction dir
+                lastPoint = snd (last acc)
+            in acc ++ [(lastPoint,(fst lastPoint + (fst inc) * steps dir, snd lastPoint + (snd inc) * steps dir))] 
+        in tail (foldl next [((0,0),(0,0))] moves)
 
-intersection :: String -> String -> [(Int,Int)]
-intersection wire1 wire2 = Set.toList (Set.intersection (Set.fromList (points wire1)) (Set.fromList (points wire2)))
+intersection :: (((Int,Int),(Int,Int)),((Int,Int),(Int,Int))) -> [(Int,Int)]
+intersection (((x11,y11),(x12,y12)),((x21,y21),(x22,y22))) =
+    if x11 == x12 && x21 <= x12 && x12 <= x22 && y11 <= y21 && y21 <= y12 then
+        [(x12, y21)]
+    else if y11 == y12 && x11 <= x21 && x21 <= x12 && y21 <= y12 && y12 <= y22 then
+        [(x21, y12)]
+    else
+        []
+
+normalize :: ((Int,Int),(Int,Int)) -> ((Int,Int),(Int,Int))
+normalize (p1,p2) = if ((fst p1) > (fst p2) || (snd p1) > (snd p2)) then (p2,p1) else (p1,p2)
+
+intersections :: String -> String -> [(Int,Int)]
+intersections wire1 wire2 = 
+    let s1 = map normalize (segments wire1)
+        s2 = map normalize (segments wire2)
+    in [(a,b) | a <- s1, b <- s2] >>= intersection
 
 distance :: String -> String -> Int
-distance wire1 wire2 = head (tail (sort (map (\(x,y) -> abs x + abs y) (intersection wire1 wire2))))
+distance wire1 wire2 = head (sort (map (\(x,y) -> abs x + abs y) (intersections wire1 wire2)))
 
 run :: IO ()
 run = let w1 = wiresStrings !! 0 in
     let w2 = wiresStrings !! 1 in
     do
---        let p1 = take 40000 (points w1)
---        print (show (length(p1)))
---        let s1 = Set.fromList p1
---        print (show (length(s1)))
---        let p2 = points w2
---        print (show (length(p2)))
---        let s2 = Set.fromList p2
---        print (show (length(s2)))
---        let i = Set.intersection s1 s2
---        print (show (length(i)))
-        
---        print ("puzzle 1:" ++ show (length (points w1)))
         print ("puzzle 1:" ++ show (distance w1 w2))
