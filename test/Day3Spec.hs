@@ -3,7 +3,10 @@ module Day3Spec (spec) where
 import Test.Hspec
 import Day3
 
+w1 :: String
 w1 = "R8,U5,L5,D3"
+
+w2 :: String
 w2 =  "U7,R6,D4,L4"
 
 spec :: Spec
