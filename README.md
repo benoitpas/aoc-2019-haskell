@@ -1,4 +1,7 @@
 # aoc-2019-haskell
+
+![Build Status](https://github.com/hspec/hspec-example/workflows/build/badge.svg)
+
 Advent of Code 2019 in Haskell
 
 I discovered Haskell by following  the course [Introduction to functional programming](https://www.edx.org/course/introduction-to-functional-programming) by the amazing [Erik Meijer](https://en.wikipedia.org/wiki/Erik_Meijer_(computer_scientist)). As I greatly enjoyed the course, I since then I have been thinking to learn more about Haskell.
