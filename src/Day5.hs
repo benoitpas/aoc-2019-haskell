@@ -1,5 +1,6 @@
 module Day5
     (
+        State (..), nextStep,
         runProgram,
         run
     ) where
@@ -20,11 +21,12 @@ nextStep state =
     let m = memory state
         i = ip state 
     in case m ! ip state of
-        3 -> state { memory = m // [(m ! i + 1, input state)], ip = i + 2}
-        _ -> state { ip = -i - 1}
+        3 -> state { memory = m // [(m ! (i + 1), input state)], ip = i + 2 }
+        4 -> state { output = Just (m ! (m ! (i + 1))), ip = i + 2 }
+        _ -> state { ip = -i - 1 }
 
 allSteps :: State -> State
-allSteps state = last $ takeWhile (\state -> ip state>= 0) (iterate nextStep state)
+allSteps state = last $ takeWhile (\state -> ip state >= 0) (iterate nextStep state)
 
 runProgram :: String -> Int -> Maybe Int
 runProgram program i =
