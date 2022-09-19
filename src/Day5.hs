@@ -6,10 +6,32 @@ module Day5
 
 import Data.Array
 
-import Day2 hiding (run)
+import Day2  (str2array)
 
-runProgram :: String -> Int -> Int
-runProgram memory input = input
+data State = State {
+    memory :: Array Int Int,
+    ip :: Int,
+    input :: Int,
+    output:: Maybe Int
+}
+
+nextStep::  State ->  State
+nextStep state =
+    let m = memory state
+        i = ip state 
+    in case m ! ip state of
+        3 -> state { memory = m // [(m ! i + 1, input state)], ip = i + 2}
+        _ -> state { ip = -i - 1}
+
+allSteps :: State -> State
+allSteps state = last $ takeWhile (\state -> ip state>= 0) (iterate nextStep state)
+
+runProgram :: String -> Int -> Maybe Int
+runProgram program i =
+    let iState = State { memory = str2array program, ip = 0, input = i, output = Nothing }
+    in
+        let lastState = allSteps iState
+        in output lastState
 
 run :: IO ()
 run = do
