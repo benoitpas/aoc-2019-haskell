@@ -1,6 +1,6 @@
 module Day5
     (
-        State (..), nextStep,
+        State (..), nextStep, allSteps,
         runProgram,
         run
     ) where
@@ -26,21 +26,21 @@ instance Eq State where
 nextStep::  State ->  State
 nextStep state =
     let m = memory state
-        i = ip state 
-    in case (m ! i) `mod` 10 of
-        1  -> process (+)
-        2  -> process (*)
-        3 -> state { memory = m // [(m ! (i + 1), input state)], ip = i + 2 }
-        4 -> state { output = Just (m ! (m ! (i + 1))), ip = i + 2 }
-        _ -> state { ip = -i - 1 }
-    where
-        process op =
-            let m = memory state
-                i = ip state in
-            let a = if (m ! i `div` 100)  `mod` 10 == 1 then m ! (i + 1) else m ! (m ! (i + 1))
-                b = if (m ! i `div` 1000) `mod` 10 == 1 then m ! (i + 2) else m ! (m ! (i + 2)) in
-                state { memory = (m // [(m ! (i + 3), a `op` b)]), ip = (i + 4)}
-
+        i = ip state in
+        let param ip inc = if (m ! ip `div` (if inc == 1 then 100 else 1000) `mod` 10) == 1 then m ! (ip + inc) else m ! (m ! (ip + inc))
+            process op = state { memory = (m // [(m ! (i + 3), (param i 1) `op` (param i 2))]), ip = (i + 4)}
+            compare op = state { memory = m // [(m ! (i + 3), if (param i 1) `op` (param i 2) then 1 else 0)], ip = (i + 4)}
+        in case (m ! i) `mod` 10 of
+            1  -> process (+)
+            2  -> process (*)
+            3 -> state { memory = m // [(m ! (i + 1), input state)], ip = i + 2 }
+            4 -> state { output = Just (m ! (m ! (i + 1))), ip = i + 2 }
+            5 -> state { ip = if (param i 1) > 0 then param i 2 else i + 3 }
+            6 -> state { ip = if (param i 1) == 0 then param i 2 else i + 3 }
+            7 -> compare (<)
+            8 -> compare (==)
+            _ -> state { ip = -i - 1 }
+               
 allSteps :: State -> State
 allSteps state = last $ takeWhile (\state -> ip state >= 0) (iterate nextStep state)
 

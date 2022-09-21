@@ -57,3 +57,11 @@ ghci> Day3.run
 "puzzle 1:806"
 (0.00 secs, 370,480 bytes)
 ```
+
+# Day 4
+
+Quite straightforward brute force solution
+
+# Day 5
+Continuing to implement the opcode interpreter from Day 2.
+A good opportunity to introduce quickCheck tests.
