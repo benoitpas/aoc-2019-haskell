@@ -34,7 +34,7 @@ nextStep state =
             1  -> process (+)
             2  -> process (*)
             3 -> state { memory = m // [(m ! (i + 1), input state)], ip = i + 2 }
-            4 -> state { output = Just (m ! (m ! (i + 1))), ip = i + 2 }
+            4 -> state { output = Just (param i 1), ip = i + 2 }
             5 -> state { ip = if (param i 1) > 0 then param i 2 else i + 3 }
             6 -> state { ip = if (param i 1) == 0 then param i 2 else i + 3 }
             7 -> compare (<)
@@ -54,5 +54,8 @@ runProgram program i =
 run :: IO ()
 run = do
     content <- readFile "src/day5_input.txt"
-    let p1 = runProgram (head (lines content)) 12
+    let program = (head (lines content))
+    let p1 = runProgram program 12
     print ("puzzle 1: " ++ show p1)
+    let p2 = runProgram program 5
+    print ("puzzle 2: " ++ show p2)
