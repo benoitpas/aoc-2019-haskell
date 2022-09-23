@@ -64,4 +64,9 @@ Quite straightforward brute force solution
 
 # Day 5
 Continuing to implement the opcode interpreter from Day 2.
-A good opportunity to introduce quickCheck tests.
+A good opportunity to introduce quickCheck tests. It was a bit laborious to add support for all opcodes but not really difficult.
+
+# Day 6
+
+For part 1, instead of using a brute force approach like in [Scala](https://github.com/benoitpas/Advent-of-Code-2019/blob/master/src/main/scala/Day6.scala) I decided to use a more subtle algorithm which recursively accumulate the results down the tree.
+

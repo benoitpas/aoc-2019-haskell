@@ -19,6 +19,7 @@ library
       Day3
       Day4
       Day5
+      Day6
   other-modules:
       Paths_aoc2019
   hs-source-dirs:
@@ -28,6 +29,7 @@ library
       array ==0.5.4.0
     , base ==4.*
     , containers ==0.6.4.1
+    , hashmap ==1.3.3
     , sort ==1.0.0.0
     , time ==1.9.3
     , unordered-containers ==0.2.*
@@ -42,6 +44,7 @@ test-suite spec
       Day3Spec
       Day4Spec
       Day5Spec
+      Day6Spec
       Paths_aoc2019
   hs-source-dirs:
       test
@@ -51,6 +54,7 @@ test-suite spec
     , array ==0.5.4.0
     , base ==4.*
     , containers ==0.6.4.1
+    , hashmap ==1.3.3
     , hspec ==2.*
     , sort ==1.0.0.0
     , time ==1.9.3
