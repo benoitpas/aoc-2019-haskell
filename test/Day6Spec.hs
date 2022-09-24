@@ -18,14 +18,32 @@ ex1 = ["COM)B",
     "J)K",
     "K)L"]
 
+mapEx1 :: Map String [String]
+mapEx1 = loadNodes ex1
+
 spec :: Spec
 spec = do
 
     describe "loadNodes" $ do
         it "loadNodes for example 1" $ do
-                (loadNodes ex1) `shouldBe` fromList [("K",["L"]),("J",["K"]),("G",["H"]),("E",["F","J"]),("D",["E","I"]),
+            mapEx1 `shouldBe` fromList [("K",["L"]),("J",["K"]),("G",["H"]),("E",["F","J"]),("D",["E","I"]),
                     ("C",["D"]),("B",["C","G"]),("COM",["B"])]
                 
     describe "nbPaths" $ do
         it "nbPaths for example 1" $ do
-                (nbPaths ex1) `shouldBe` 42
+            (nbPaths ex1) `shouldBe` 42
+
+    describe "toCom" $ do
+        it "does zero hop" $ do
+            toCom mapEx1 "COM" `shouldBe` []
+
+        it "does one hop" $ do
+            (toCom mapEx1 "B") `shouldBe` ["COM"]
+
+        it "does two hops" $ do
+            (toCom mapEx1 "C") `shouldBe` ["COM","B"]
+
+        it "does more hops" $ do
+            (toCom mapEx1 "I") `shouldBe` ["COM","B","C","D"]
+
+

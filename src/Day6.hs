@@ -1,6 +1,6 @@
 module Day6
     (
-        loadNodes,nbPaths,
+        loadNodes,nbPaths, toCom,
         run
     ) where
 
@@ -25,8 +25,20 @@ nbPaths orbitals =
                         _ -> (0,0) 
     in fst (pair "COM")
 
+-- reverses the orientated graph stored in the map
+--reverse :: Map String [String] -> Map String [String]
+--reverse grap = 
+
+toCom :: Map String [String] -> String -> [String]
+toCom graph start = case start of
+                        "COM" -> []
+                        _ -> case Data.HashMap.toList (Data.HashMap.filter (\v -> any (== start) v) graph) of
+                            (k,_):_ -> toCom graph k ++ [k]
+                            _ -> []
+
 run :: IO ()
 run = do
     content <- readFile "src/day6_input.txt"
     let graph = (lines content)
     print ("puzzle 1: " ++ show (nbPaths graph))
+
