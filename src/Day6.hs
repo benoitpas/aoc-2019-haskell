@@ -1,6 +1,6 @@
 module Day6
     (
-        loadNodes,nbPaths, toCom,
+        loadNodes,nbPaths, toCom, distance,
         run
     ) where
 
@@ -17,17 +17,12 @@ loadNodes pairs = foldr (\pair -> \m ->
                 _ -> m
     in r) empty pairs
 
-nbPaths :: [String] -> Int
-nbPaths orbitals = 
-    let m = loadNodes orbitals in
+nbPaths :: Map String [String] -> Int
+nbPaths m = 
     let pair key = case (Data.HashMap.lookup key m) of
                         Just l -> let pairs = Prelude.map pair l in foldr (\p -> \acc -> (fst acc + fst p + snd p + 1 , snd acc + snd p +1)) (0,0) pairs
                         _ -> (0,0) 
     in fst (pair "COM")
-
--- reverses the orientated graph stored in the map
---reverse :: Map String [String] -> Map String [String]
---reverse grap = 
 
 toCom :: Map String [String] -> String -> [String]
 toCom graph start = case start of
@@ -36,9 +31,17 @@ toCom graph start = case start of
                             (k,_):_ -> toCom graph k ++ [k]
                             _ -> []
 
+distance :: Map String [String] -> Int
+distance graph = 
+    let youPath = toCom graph "YOU" 
+        canPath = toCom graph "SAN" in 
+    let commonPairs = takeWhile (\(x,y) -> x == y) (youPath `zip` canPath)
+    in length youPath + length canPath - 2 * length commonPairs 
+
 run :: IO ()
 run = do
     content <- readFile "src/day6_input.txt"
-    let graph = (lines content)
+    let graph = loadNodes (lines content)
     print ("puzzle 1: " ++ show (nbPaths graph))
-
+    print ("puzzle 2: " ++ show (distance graph))
+ 

@@ -21,6 +21,9 @@ ex1 = ["COM)B",
 mapEx1 :: Map String [String]
 mapEx1 = loadNodes ex1
 
+mapEx2 :: Map String [String]
+mapEx2 = Data.HashMap.insert "I" ["SAN"] (Data.HashMap.insert "K" ["L","YOU"] mapEx1)
+
 spec :: Spec
 spec = do
 
@@ -31,7 +34,7 @@ spec = do
                 
     describe "nbPaths" $ do
         it "nbPaths for example 1" $ do
-            (nbPaths ex1) `shouldBe` 42
+            (nbPaths mapEx1) `shouldBe` 42
 
     describe "toCom" $ do
         it "does zero hop" $ do
@@ -46,4 +49,7 @@ spec = do
         it "does more hops" $ do
             (toCom mapEx1 "I") `shouldBe` ["COM","B","C","D"]
 
+    describe "distance" $ do
+        it "find the orbitals" $ do
+            (distance mapEx2) `shouldBe` 4
 

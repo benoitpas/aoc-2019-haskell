@@ -70,4 +70,4 @@ A good opportunity to introduce quickCheck tests. It was a bit laborious to add 
 
 For part 1, instead of using a brute force approach like in [Scala](https://github.com/benoitpas/Advent-of-Code-2019/blob/master/src/main/scala/Day6.scala) I decided to use a more subtle algorithm which recursively accumulate the results down the tree.
 
-For part 2, the most efficient method would require to reverse the direction of the edges. Out of curiosity I tried a solution that doesn't, it iterates on the values to find the previous node.
+For part 2, the most efficient method would require to reverse the direction of the edges. Out of curiosity I tried a solution that doesn't, it iterates on the values to find the previous node. It turns out to perform fast enough for the given puzzled input.
