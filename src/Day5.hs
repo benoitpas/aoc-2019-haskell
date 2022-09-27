@@ -12,7 +12,7 @@ import Day2  (str2array)
 data State = State {
     memory :: Array Int Int,
     ip :: Int,
-    input :: [Int],
+    input :: Int,
     output:: Maybe Int
 }
 
@@ -33,7 +33,7 @@ nextStep state =
         in case (m ! i) `mod` 10 of
             1  -> process (+)
             2  -> process (*)
-            3 -> state { memory = m // [(m ! (i + 1), head (input state))], ip = i + 2 , input = tail (input state)  }
+            3 -> state { memory = m // [(m ! (i + 1), input state)], ip = i + 2 }
             4 -> state { output = Just (param 1), ip = i + 2 }
             5 -> state { ip = if (param 1) > 0 then param 2 else i + 3 }
             6 -> state { ip = if (param 1) == 0 then param 2 else i + 3 }
@@ -44,7 +44,7 @@ nextStep state =
 allSteps :: State -> State
 allSteps iState = last $ takeWhile (\state -> ip state >= 0) (iterate nextStep iState)
 
-runProgram :: String -> [Int] -> Maybe Int
+runProgram :: String -> Int -> Maybe Int
 runProgram program i =
     let iState = State { memory = str2array program, ip = 0, input = i, output = Nothing }
     in
@@ -55,7 +55,7 @@ run :: IO ()
 run = do
     content <- readFile "src/day5_input.txt"
     let program = (head (lines content))
-    let p1 = runProgram program [12]
+    let p1 = runProgram program 12
     print ("puzzle 1: " ++ show p1)
-    let p2 = runProgram program [5]
+    let p2 = runProgram program 5
     print ("puzzle 2: " ++ show p2)
