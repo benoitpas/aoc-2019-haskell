@@ -59,7 +59,7 @@ distance :: String -> String -> Int
 distance wire1 wire2 = head (sort (map (\(x,y) -> abs x + abs y) (intersections (segments wire1) (segments wire2))))
 
 delay :: [Segment] -> Point -> Int
-delay segments point = 
+delay segs point = 
     let next acc (p1,p2) = case acc of 
             Left v  ->  Left v
             Right v ->  if fst p1 == fst p2 then
@@ -76,7 +76,7 @@ delay segments point =
                                 Left (v + fst p1 - fst point)
                             else
                                 Right (v + abs (fst p2 - fst p1))
-    in case foldl next (Right 0) segments of
+    in case foldl next (Right 0) segs of
         Left v -> v
         Right v -> v
 
