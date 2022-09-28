@@ -23,14 +23,15 @@ instance Eq State where
   x == y = (memory x == memory y && ip x == ip y && input x == input y && output x == output y)
 
 
-nextStep::  State ->  State
+nextStep::  State -> (State, Int)
 nextStep state =
     let m = memory state
         i = ip state in
-        let param inc = if (m ! i `div` (if inc == 1 then 100 else 1000) `mod` 10) == 1 then m ! (i + inc) else m ! (m ! (i + inc))
-            process op = state { memory = (m // [(m ! (i + 3), (param 1) `op` (param 2))]), ip = (i + 4)}
-            comp op = state { memory = m // [(m ! (i + 3), if (param 1) `op` (param 2) then 1 else 0)], ip = (i + 4)}
-        in case (m ! i) `mod` 10 of
+    let param inc = if (m ! i `div` (if inc == 1 then 100 else 1000) `mod` 10) == 1 then m ! (i + inc) else m ! (m ! (i + inc))
+        process op = state { memory = (m // [(m ! (i + 3), (param 1) `op` (param 2))]), ip = (i + 4)}
+        comp op = state { memory = m // [(m ! (i + 3), if (param 1) `op` (param 2) then 1 else 0)], ip = (i + 4)}
+        cmd = (m ! i) `mod` 100 in
+    let newState = case cmd of
             1  -> process (+)
             2  -> process (*)
             3 -> state { memory = m // [(m ! (i + 1), input state)], ip = i + 2 }
@@ -40,9 +41,10 @@ nextStep state =
             7 -> comp (<)
             8 -> comp (==)
             _ -> state { ip = -i - 1 }
+    in (newState, cmd)
                
 allSteps :: State -> State
-allSteps iState = last $ takeWhile (\state -> ip state >= 0) (iterate nextStep iState)
+allSteps iState = last $ takeWhile (\state -> ip state >= 0 || False) (iterate (fst . nextStep) iState)
 
 runProgram :: String -> Int -> Maybe Int
 runProgram program i =

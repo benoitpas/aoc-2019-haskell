@@ -74,4 +74,6 @@ For part 2, the most efficient method would require to reverse the direction of 
 
 # Day 7
 
-The first step I took here was to update the interpreter from Day 5 to take a list of input instead of only just one. Instead of copying the code, I thought it would be better to update it in Day 2 as thanks to the unit tests I know there shouldn't be any regression introduced by the change.
+Finally I was able to reuse 'nextStep' from Day5 with minimal changes. I did some refactoring to simplify a bit the code, especially around handling the parameters for the opcodes.
+For the first part, adding the logic to initialise the amps and then run them 'connected' was quite straight forward with a fold.
+For the second part it required one more level of loop to handle the feedback. Here using small functions to break down the logic really helped getting it right.

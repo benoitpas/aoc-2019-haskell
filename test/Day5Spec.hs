@@ -20,21 +20,21 @@ spec = do
 
     describe "nextStep" $ do
         it "check reading from input" $ do
-                (nextStep s1) `shouldBe` s2
+                (nextStep s1) `shouldBe` (s2, 3)
         it "check writing to input" $ do
-                (nextStep s2) `shouldBe` s3
+                (nextStep s2) `shouldBe` (s3, 4)
         it "ends the program" $ do
-            (nextStep (State (list2array [99]) 0 0 Nothing)) `shouldBe` (State (list2array [99]) (-1) 0 Nothing)
+            (nextStep (State (list2array [99]) 0 0 Nothing)) `shouldBe` (State (list2array [99]) (-1) 0 Nothing, 99)
         it "processes an addition" $ do
-            (nextStep (State (list2array [1,0,0,0]) 0 0 Nothing)) `shouldBe` (State (list2array [2,0,0,0]) 4 0 Nothing)
+            (nextStep (State (list2array [1,0,0,0]) 0 0 Nothing)) `shouldBe` (State (list2array [2,0,0,0]) 4 0 Nothing, 1)
         it "processes an addition with immediate access" $ do
-            (nextStep (State (list2array [1101,100,-1,4,0]) 0 0 Nothing)) `shouldBe` (State (list2array [1101,100,-1,4,99]) 4 0 Nothing)
+            (nextStep (State (list2array [1101,100,-1,4,0]) 0 0 Nothing)) `shouldBe` (State (list2array [1101,100,-1,4,99]) 4 0 Nothing, 1)
         it "processes a multiplication" $ do
-            (nextStep (State (list2array [2,3,0,3,99]) 0 0 Nothing)) `shouldBe` (State (list2array [2,3,0,6,99]) 4 0 Nothing)
+            (nextStep (State (list2array [2,3,0,3,99]) 0 0 Nothing)) `shouldBe` (State (list2array [2,3,0,6,99]) 4 0 Nothing, 2)
         it "processes a multiplication with immediate access" $ do
-            (nextStep (State (list2array [1002,4,3,4,33]) 0 0 Nothing)) `shouldBe` (State (list2array [1002,4,3,4,99]) 4 0 Nothing)
+            (nextStep (State (list2array [1002,4,3,4,33]) 0 0 Nothing)) `shouldBe` (State (list2array [1002,4,3,4,99]) 4 0 Nothing, 2)
         it "processes a jump if true" $ do
-            (nextStep (State (list2array [1105,4,7]) 0 0 Nothing)) `shouldBe` (State (list2array [1105,4,7]) 7 0 Nothing)
+            (nextStep (State (list2array [1105,4,7]) 0 0 Nothing)) `shouldBe` (State (list2array [1105,4,7]) 7 0 Nothing, 5)
 
     describe "allSteps"  $ do
         prop "comparison 1" $
