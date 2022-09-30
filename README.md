@@ -77,3 +77,11 @@ For part 2, the most efficient method would require to reverse the direction of 
 Finally I was able to reuse 'nextStep' from Day5 with minimal changes. I did some refactoring to simplify a bit the code, especially around handling the parameters for the opcodes.
 For the first part, adding the logic to initialise the amps and then run them 'connected' was quite straight forward with a fold.
 For the second part it required one more level of loop to handle the feedback. Here using small functions to break down the logic really helped getting it right.
+
+# Day 8
+
+Solving Day 8 puzzles was quite straightforward, the solution is slightly different from Scala one because I'm learning the Haskell library as doing the excercises (I had a better knowledge of the Scala library when doing the other one).
+
+# Day 9
+The IntCode interpreter is back !
+I started by changing it to handle long integer, which in Haskell is very easy, it was just about replacing 'Int' by 'Integer'. I introduced a type for the interpreter memory to make the code more dry.
