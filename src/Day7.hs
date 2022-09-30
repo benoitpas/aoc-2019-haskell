@@ -5,18 +5,17 @@ module Day7
         run
     ) where
 
-import Data.Array
 import Data.List(permutations, find)
 import Data.Maybe(fromJust)
 
-import Day2 (list2array, str2list)
+import Day2 (list2array, str2list, Memory)
 
 import Day5 (State(..), nextStep, allSteps)
 
-initAmps :: Array Int Int -> [Int] -> [State]
+initAmps :: Memory -> [Integer] -> [State]
 initAmps mem phases =  map (\p -> (fst . nextStep) (State mem 0 p Nothing)) phases 
 
-runAmps1 :: [Int] -> [Int] -> Int
+runAmps1 :: [Integer] -> [Integer] -> Integer
 runAmps1 program phases = 
     let mem = list2array program in
     let iStates = initAmps mem phases
@@ -25,20 +24,20 @@ runAmps1 program phases =
                             _ -> -1
                             ) 0 iStates
 
-allPhases1 :: [[Int]]
+allPhases1 :: [[Integer]]
 allPhases1 = permutations [0..4]
 
-allPhases2 :: [[Int]]
+allPhases2 :: [[Integer]]
 allPhases2 = permutations [5..9]
 
-maxSignal :: ([Int] -> [Int] -> Int) -> [[Int]] -> [Int] -> Int
+maxSignal :: ([Integer] -> [Integer] -> Integer) -> [[Integer]] -> [Integer] -> Integer
 maxSignal runAmps allPhases program =
     foldr (\phases -> \maxOutput -> (runAmps program phases) `max` maxOutput) 0 allPhases
 
-maxSignal1 :: [Int] -> Int
+maxSignal1 :: [Integer] -> Integer
 maxSignal1 program = maxSignal runAmps1 allPhases1 program
 
-maxSignal2 :: [Int] -> Int
+maxSignal2 :: [Integer] -> Integer
 maxSignal2 program = maxSignal runAmps2 allPhases2 program
 
 nextSteps :: State -> (State, Bool)
@@ -49,13 +48,13 @@ nextSteps iState =
             99 -> (nState, True)
             _ -> nextSteps nState
 
-nextCycle :: ([State], Int, Bool) -> ([State], Int, Bool)
+nextCycle :: ([State], Integer, Bool) -> ([State], Integer, Bool)
 nextCycle (states, inputSignal, _) = 
     foldl (\(aStates, aSignal, _) -> \s -> 
         let (nState, finished) = nextSteps s  { input = aSignal } in
             (aStates ++ [nState], fromJust (output nState),finished))  ([], inputSignal, False) states
 
-runAmps2 :: [Int] -> [Int] -> Int
+runAmps2 :: [Integer] -> [Integer] -> Integer
 runAmps2 program phases = 
     let mem = list2array program in
     let iStates = initAmps mem phases in

@@ -7,13 +7,13 @@ module Day5
 
 import Data.Array
 
-import Day2  (str2array)
+import Day2  (str2array, Memory)
 
 data State = State {
-    memory :: Array Int Int,
-    ip :: Int,
-    input :: Int,
-    output:: Maybe Int
+    memory :: Memory,
+    ip :: Integer,
+    input :: Integer,
+    output:: Maybe Integer
 }
 
 instance Show State where
@@ -23,7 +23,7 @@ instance Eq State where
   x == y = (memory x == memory y && ip x == ip y && input x == input y && output x == output y)
 
 
-nextStep::  State -> (State, Int)
+nextStep::  State -> (State, Integer)
 nextStep state =
     let m = memory state
         i = ip state in
@@ -46,7 +46,7 @@ nextStep state =
 allSteps :: State -> State
 allSteps iState = last $ takeWhile (\state -> ip state >= 0 || False) (iterate (fst . nextStep) iState)
 
-runProgram :: String -> Int -> Maybe Int
+runProgram :: String -> Integer -> Maybe Integer
 runProgram program i =
     let iState = State { memory = str2array program, ip = 0, input = i, output = Nothing }
     in

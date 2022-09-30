@@ -1,11 +1,13 @@
 module Day2
     (
-        run,
+        run, Memory,
         wordsWhen, str2list, list2array, str2array,
         allSteps, nextStep
     ) where
 
 import Data.Array
+
+type Memory =  Array Integer Integer
 
 wordsWhen :: (Char -> Bool) -> String -> [String]
 wordsWhen p s =  case dropWhile p s of
@@ -13,16 +15,16 @@ wordsWhen p s =  case dropWhile p s of
                       s' -> w : wordsWhen p s''
                             where (w, s'') = break p s'
 
-str2list :: String -> [Int]
+str2list :: String -> [Integer]
 str2list s = map read (wordsWhen (==',') s)
 
-list2array :: Ix i => [i] -> Array Int i
-list2array lst = listArray (0,(length lst) - 1) lst
+list2array :: [Integer] -> Array Integer Integer
+list2array lst = listArray (0,  toInteger (length lst)- 1) lst
 
-str2array :: String -> Array Int Int
+str2array :: String -> Memory
 str2array = list2array . str2list
 
-nextStep :: ((Array Int Int),Int) -> ((Array Int Int),Int)
+nextStep :: (Memory,Integer) -> (Memory,Integer)
 nextStep (program, idx) = 
     case (program ! idx) of
         1  -> process (+)
@@ -34,15 +36,15 @@ nextStep (program, idx) =
             let b = (program ! (program ! (idx + 2))) in
                 (program // [(program ! (idx + 3), a `op` b)], idx + 4)
 
-allSteps :: ((Array Int Int),Int) -> ((Array Int Int),Int)
+allSteps :: (Memory,Integer) -> (Memory,Integer)
 allSteps (program, idx) = last ((takeWhile (\(_,i) -> i >= 0) (iterate nextStep (program, idx))))
 
-runProgram :: (Array Int Int) -> Int -> Int -> Int
+runProgram :: Memory -> Integer -> Integer -> Integer
 runProgram memory noun verb = 
     let memory2 = memory // [(1, noun), (2, verb)] in
     fst (allSteps (memory2,0)) ! 0
 
-findOutput :: (Array Int Int) -> Int -> Int 
+findOutput :: Memory -> Integer -> Integer 
 findOutput memory output =
     let solutions = [(noun,verb) | noun <- [0..99], verb <- [0..99], runProgram memory noun verb == output] in
     case solutions of
