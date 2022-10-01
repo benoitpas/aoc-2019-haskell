@@ -10,17 +10,17 @@ import Data.Maybe(fromJust)
 
 import Day2 (list2array, str2list, Memory)
 
-import Day5 (State(..), nextStep, allSteps)
+import Day5 (State(..), stateFromMemory, nextStep, allSteps)
 
 initAmps :: Memory -> [Integer] -> [State]
-initAmps mem phases =  map (\p -> (fst . nextStep) (State mem 0 p Nothing)) phases 
+initAmps mem phases =  map (\p -> (fst . nextStep) (stateFromMemory mem p)) phases 
 
 runAmps1 :: [Integer] -> [Integer] -> Integer
 runAmps1 program phases = 
     let mem = list2array program in
     let iStates = initAmps mem phases
     in foldl (\a -> \s -> case output (allSteps s { input = a}) of
-                            Just lastOutput -> lastOutput
+                            [lastOutput] -> lastOutput
                             _ -> -1
                             ) 0 iStates
 
@@ -52,7 +52,7 @@ nextCycle :: ([State], Integer, Bool) -> ([State], Integer, Bool)
 nextCycle (states, inputSignal, _) = 
     foldl (\(aStates, aSignal, _) -> \s -> 
         let (nState, finished) = nextSteps s  { input = aSignal } in
-            (aStates ++ [nState], fromJust (output nState),finished))  ([], inputSignal, False) states
+            (aStates ++ [nState], head (output nState),finished))  ([], inputSignal, False) states
 
 runAmps2 :: [Integer] -> [Integer] -> Integer
 runAmps2 program phases = 
