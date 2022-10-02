@@ -85,3 +85,5 @@ Solving Day 8 puzzles was quite straightforward, the solution is slightly differ
 # Day 9
 The IntCode interpreter is back !
 I started by changing it to handle long integer, which in Haskell is very easy, it was just about replacing 'Int' by 'Integer'. I introduced a type for the interpreter memory to make the code more dry.
+
+Then I changed the memory type from Array to a Map to handle memory addresses which are outside of the initial memory. It would have been possible to keep using an array and grow it when needed. Instead I choose a map as with there is easier to manage. In contrast, with an array when the size grows I would have had to make it bigger. The issue with the map is that for 'continuous' memory it uses more than double the memory compared to an array as we need to store the index as well.

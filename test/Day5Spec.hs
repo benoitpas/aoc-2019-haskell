@@ -1,25 +1,22 @@
-module Day5Spec (spec) where
+module Day5Spec (spec, stateFrom) where
 
 import Test.Hspec
 import Test.Hspec.QuickCheck (prop)
 
-import Day2 (list2array, Memory)
+import Day2 (list2memory)
 import Day5
 
 stateFrom :: [Integer] -> Integer -> State
-stateFrom m i = State (list2array m) 0 0 i []
+stateFrom m i = State (list2memory m) 0 0 i []
 
 s1 :: State
 s1 = stateFrom [3,0,4,0,99] 42
 
 s2 :: State
-s2 = s1 { memory = list2array [42,0,4,0,99], ip = 2 }
+s2 = s1 { memory = list2memory [42,0,4,0,99], ip = 2 }
 
 s3 :: State
 s3 = s2 { ip = 4, output = [42] }
-
-quince :: [Integer]
-quince = [109,1,204,-1,1001,100,1,100,1008,100,16,101,1006,101,0,99]
 
 spec :: Spec
 spec = do
@@ -30,19 +27,19 @@ spec = do
         it "check writing to input" $ do
             nextStep s2 `shouldBe` (s3, 4)
         it "ends the program" $ do
-            nextStep (stateFrom [99] 0) `shouldBe` (State (list2array [99]) (-1) 0 0 [], 99)
+            nextStep (stateFrom [99] 0) `shouldBe` (State (list2memory [99]) (-1) 0 0 [], 99)
         it "processes an addition" $ do
-            nextStep (stateFrom [1,0,0,0] 0) `shouldBe` (State (list2array [2,0,0,0]) 4 0 0 [], 1)
+            nextStep (stateFrom [1,0,0,0] 0) `shouldBe` (State (list2memory [2,0,0,0]) 4 0 0 [], 1)
         it "processes an addition with immediate access" $ do
-            nextStep (stateFrom [1101,100,-1,4,0] 0) `shouldBe` (State (list2array [1101,100,-1,4,99]) 4 0 0 [], 1)
+            nextStep (stateFrom [1101,100,-1,4,0] 0) `shouldBe` (State (list2memory [1101,100,-1,4,99]) 4 0 0 [], 1)
         it "processes a multiplication" $ do
-            nextStep (stateFrom [2,3,0,3,99] 0) `shouldBe` (State (list2array [2,3,0,6,99]) 4 0 0 [], 2)
+            nextStep (stateFrom [2,3,0,3,99] 0) `shouldBe` (State (list2memory [2,3,0,6,99]) 4 0 0 [], 2)
         it "processes a multiplication with immediate access" $ do
-            nextStep (stateFrom [1002,4,3,4,33] 0) `shouldBe` (State (list2array [1002,4,3,4,99]) 4 0 0 [], 2)
+            nextStep (stateFrom [1002,4,3,4,33] 0) `shouldBe` (State (list2memory [1002,4,3,4,99]) 4 0 0 [], 2)
         it "processes a jump if true" $ do
-            nextStep (stateFrom [1105,4,7] 0) `shouldBe` (State (list2array [1105,4,7]) 7 0 0 [], 5)
+            nextStep (stateFrom [1105,4,7] 0) `shouldBe` (State (list2memory [1105,4,7]) 7 0 0 [], 5)
         it "updates the relative base" $ do
-            nextStep (State (list2array [109,19]) 0 2000 0 []) { base = 2000} `shouldBe` (State (list2array [109,19]) 2 2019 0 [], 9)
+            nextStep (State (list2memory [109,19]) 0 2000 0 []) { base = 2000} `shouldBe` (State (list2memory [109,19]) 2 2019 0 [], 9)
 
     describe "allSteps"  $ do
         prop "comparison 1" $
@@ -61,9 +58,6 @@ spec = do
             \i -> output (allSteps (stateFrom [3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9] i)) `shouldBe` [if i == 0 then 0 else 1]
         prop "jump 2" $
             \i -> output (allSteps (stateFrom [3,3,1105,-1,9,1101,0,0,12,4,12,99,1] i)) `shouldBe` [if i <= 0 then 0 else 1]
---        it "runs  a quice" $
---            output (allSteps (stateFrom quince 0)) `shouldBe` quince
-
 
     describe "runProgram" $ do
         prop "simple input/output test" $

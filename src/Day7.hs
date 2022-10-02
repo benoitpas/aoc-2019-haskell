@@ -6,9 +6,9 @@ module Day7
     ) where
 
 import Data.List(permutations, find)
-import Data.Maybe(fromJust)
+--import Data.Maybe(fromJust)
 
-import Day2 (list2array, str2list, Memory)
+import Day2 (list2memory, str2list, Memory)
 
 import Day5 (State(..), stateFromMemory, nextStep, allSteps)
 
@@ -17,11 +17,11 @@ initAmps mem phases =  map (\p -> (fst . nextStep) (stateFromMemory mem p)) phas
 
 runAmps1 :: [Integer] -> [Integer] -> Integer
 runAmps1 program phases = 
-    let mem = list2array program in
+    let mem = list2memory program in
     let iStates = initAmps mem phases
     in foldl (\a -> \s -> case output (allSteps s { input = a}) of
-                            [lastOutput] -> lastOutput
-                            _ -> -1
+                            [] -> -1
+                            l -> last l
                             ) 0 iStates
 
 allPhases1 :: [[Integer]]
@@ -52,11 +52,11 @@ nextCycle :: ([State], Integer, Bool) -> ([State], Integer, Bool)
 nextCycle (states, inputSignal, _) = 
     foldl (\(aStates, aSignal, _) -> \s -> 
         let (nState, finished) = nextSteps s  { input = aSignal } in
-            (aStates ++ [nState], head (output nState),finished))  ([], inputSignal, False) states
+            (aStates ++ [nState], last (output nState),finished))  ([], inputSignal, False) states
 
 runAmps2 :: [Integer] -> [Integer] -> Integer
 runAmps2 program phases = 
-    let mem = list2array program in
+    let mem = list2memory program in
     let iStates = initAmps mem phases in
     let cycles = iterate nextCycle (iStates, 0, False) in
         case find (\(_,_,f) -> f) cycles of

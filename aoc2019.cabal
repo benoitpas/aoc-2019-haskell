@@ -49,6 +49,7 @@ test-suite spec
       Day6Spec
       Day7Spec
       Day8Spec
+      Day9Spec
       Paths_aoc2019
   hs-source-dirs:
       test
