@@ -32,21 +32,20 @@ nextStep::  State -> (State, Integer)
 nextStep state =
     let m = memory state
         i = ip state in
-    let mode inc = (m ! i `div` 10 ^ (inc + 1)) `mod` 10 in
-    let readM idx = findWithDefault 0 idx m
-        param inc = case mode inc of
+    let readM idx = findWithDefault 0 idx m in
+    let mode inc = (readM i `div` 10 ^ (inc + 1)) `mod` 10 in
+    let param inc = case mode inc of
                         0 -> readM (readM (i + inc))
                         1 -> readM (i + inc)
                         2 -> readM (readM (i + inc) + base state)
-        writeIdx inc = i + inc + if (mode inc) == 2 then base state else 0 in
---    let write inc value = insert (writeIdx inc) value m
-    let process op = state { memory = insert (readM (writeIdx 3)) (param 1 `op` param 2) m, ip = i + 4}
-        comp    op = state { memory = insert (readM (writeIdx 3)) (if (param 1) `op` (param 2) then 1 else 0) m, ip = i + 4}
+        writeIdx inc = readM (i + inc) + if (mode inc) == 2 then base state else 0 in
+    let process op = state { memory = insert (writeIdx 3) (param 1 `op` param 2) m, ip = i + 4}
+        comp    op = state { memory = insert (writeIdx 3) (if (param 1) `op` (param 2) then 1 else 0) m, ip = i + 4}
         cmd = (m ! i) `mod` 100 in
     let newState = case cmd of
             1  -> process (+)
             2  -> process (*)
-            3 -> state { memory = insert (readM (writeIdx 1)) (input state) m, ip = i + 2 }
+            3 -> state { memory = insert (writeIdx 1) (input state) m, ip = i + 2 }
             4 -> state { output = output state ++ [param 1] , ip = i + 2 }
             5 -> state { ip = if (param 1) > 0 then param 2 else i + 3 }
             6 -> state { ip = if (param 1) == 0 then param 2 else i + 3 }

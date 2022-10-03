@@ -6,7 +6,6 @@ module Day7
     ) where
 
 import Data.List(permutations, find)
---import Data.Maybe(fromJust)
 
 import Day2 (list2memory, str2list, Memory)
 
