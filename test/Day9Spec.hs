@@ -1,5 +1,6 @@
 module Day9Spec (spec) where
 import Test.Hspec
+import Test.Hspec.QuickCheck (prop)
 
 import Data.Map
 
@@ -20,6 +21,9 @@ s3 = s2 { ip = 4, output = [109]}
 
 s4 :: State
 s4 = s3 { memory = insert 100 1 (memory s3), ip = 8}
+ 
+largeOutput :: State
+largeOutput = stateFrom [1102,34915192,34915192,7,4,7,99,0] 0
 
 spec :: Spec
 spec = do
@@ -31,7 +35,11 @@ spec = do
             nextStep s2 `shouldBe` (s3, 4)
         it "quince 3" $ do
             nextStep s3 `shouldBe` (s4, 1)
+        prop "checks 203" $ do
+            \i -> output (allSteps (State (fromList [(0,203),(1,0),(2,4),(3,1),(4,99)]) 0 1 i [])) `shouldBe`[i]
 
     describe "allSteps"  $ do
         it "runs a quice" $
             output (allSteps (stateFrom quince 0)) `shouldBe` quince
+        it "outputs a large number" $
+            output (allSteps largeOutput) `shouldBe` [1219070632396864]
