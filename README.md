@@ -89,3 +89,8 @@ I started by changing it to handle long integer, which in Haskell is very easy, 
 Then I changed the memory type from Array to a Map to handle memory addresses which are outside of the initial memory. It would have been possible to keep using an array and grow it when needed. Instead I choose a map as with there is easier to manage. In contrast, with an array when the size grows I would have had to make it bigger. The issue with the map is that for 'continuous' memory it uses more than double the memory compared to an array as we need to store the index as well.
 
 The rest of the puzzles was quite straightforward, there was still an issue with the implementation of one of the opcodes but that was quickly found by the self diagnostic program. The program in mode 2 takes surprisingly a few seconds to run.
+
+# Day 10
+Day 10 doesn't use the interpreter, it is a self contained puzzle. Here being able to write short functions to decompose the problem really helped as it was not very difficult but had lots of details to get right. Being able to unit test all the small independent functions allowed me to progress confidently.
+
+For part 1, it is a simple combinational algorithm: for one point we find all aligned points with it and the reference astroid. Then we partitions the points in 2 sets, one containing the points 'before' the reference points and the points 'after'. Then from each set we keep the 'visible' one and add the others to the hidden points set. Then we repeat until we have processed all points.
