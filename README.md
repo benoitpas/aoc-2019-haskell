@@ -94,3 +94,9 @@ The rest of the puzzles was quite straightforward, there was still an issue with
 Day 10 doesn't use the interpreter, it is a self contained puzzle. Here being able to write short functions to decompose the problem really helped as it was not very difficult but had lots of details to get right. Being able to unit test all the small independent functions allowed me to progress confidently.
 
 For part 1, it is a simple combinational algorithm: for one point we find all aligned points with it and the reference astroid. Then we partitions the points in 2 sets, one containing the points 'before' the reference points and the points 'after'. Then from each set we keep the 'visible' one and add the others to the hidden points set. Then we repeat until we have processed all points.
+
+The puzzle for part 2 hints to a more efficient solution: computing the angle and distances for points from the reference point. All aligned points have the same angle. The visible point for one angle is the one with the lower distance.
+
+The issue is that if the angle is going to a 'double' and so even for aligned points [it may be slightly different](https://floating-point-gui.de/). I did try to implement this method and although it works for puzzled with the larger example, it fails for puzzle even if with the last example provided.
+
+As we are dealing with integer coordinates, another option would be to represent the angle as a *pair of integer* like (x,y) where x and y have no common denominator so that the pair is unique for every angle of our grid.

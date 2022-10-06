@@ -1,7 +1,8 @@
 module Day10
     (
-        Point,
+        Point, toPolar,
         toPoints, aligned, findAligned, findVisibleCount, findMaxVisibleCount,
+        anglesAndDistances, findVisibleCount2, listVapAsteroids,
         run
     ) where
 
@@ -38,9 +39,37 @@ findVisibleCount p1 points =
     let (_,visible,_) = head (filter (\(t,_,_) -> length t == 0) (iterate (findAligned p1) (todo, S.empty, S.empty))) in
         length visible
 
-findMaxVisibleCount :: [Point] -> Int
+findMaxVisibleCount :: [Point] -> (Int,Point)
 findMaxVisibleCount points =
-    foldr max 0 (map (\p -> findVisibleCount p points) points)
+    foldr max (0,(0,0)) (map (\p -> (findVisibleCount2 p points, p)) points)
+
+toPolar :: (Ord b, Floating b) => (b, b) -> (b, b)
+toPolar (x,y) =  
+    let d = sqrt (x^2 + y^2)
+        a =  if x >= 0 then 
+                if y>=0 then asin (y/d) else asin (y/d)
+             else
+                if y>=0 then pi - asin (y/d) else pi - asin (y/d)
+    in (a,d)
+
+anglesAndDistances :: Point -> [Point] -> [((Double,Double),Point)]
+anglesAndDistances (x1,y1) points = 
+    L.sort $ L.map (\(x, y) -> 
+        let xf = fromIntegral (x - x1)
+            yf = fromIntegral (y - y1)
+        in (toPolar(xf,yf),(x,y))) (L.delete (x1,y1) points)
+
+findVisibleCount2 :: Point -> [Point] -> Int
+findVisibleCount2 p1 points =
+    let ad = anglesAndDistances p1 points in
+    let adGrouped = L.transpose $ L.groupBy (\((a1,_),_) -> \((a2,_),_) -> a1 == a2) ad
+    in length (head adGrouped)
+
+--listVapAsteroids :: Point -> [Point] -> [Point]
+listVapAsteroids p1 points =
+    let ad = anglesAndDistances p1 points in
+    let adGrouped = L.transpose $ L.groupBy (\((a1,_),_) -> \((a2,_),_) -> a1 == a2) ad
+    in adGrouped >>= map (\(_,p) -> p)
 
 run :: IO ()
 run = do
