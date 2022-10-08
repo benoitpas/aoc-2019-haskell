@@ -96,18 +96,20 @@ reduce (a,b) =
 
 anglesAndDistancesInt :: Point -> [Point] -> [((Int,Int),Int,Point)]
 anglesAndDistancesInt (x1,y1) points = 
+    let sortedPoints = L.sortBy (\(x2,y2) -> \(x3,y3) -> compare (toPolar(fromIntegral (x2-x1), fromIntegral (y2-y1))) (toPolar(fromIntegral (x3-x1), fromIntegral (y3-y1)))) (L.delete (x1,y1) points) in
     let r = L.map (\(x, y) -> let xa = x - x1
                                   ya = y - y1
-                              in (reduce(xa,ya), x^2 + y^2, (x,y))) (L.delete (x1,y1) points)
-    in L.sort r
+                              in (reduce(xa,ya), xa^2 + ya^2, (x,y))) sortedPoints
+    in r
 
 listVapAsteroidsInt p1 points =
     let ad = anglesAndDistancesInt p1 points in
-    let adGrouped = L.transpose $ L.groupBy (\((a1,b1),_,_) -> \((a2,b2),_,_) -> a1 == a2 && b1 == b2) ad in
-    --let adGroupedWithAngle = L.map 
-    let adGroupedSorted = L.map (L.sortBy (\((a1,b1),d1,_) -> \((a2,b2),d2,_) -> compare (fst (toPolar(fromIntegral a1,fromIntegral b1)),d1) (fst(toPolar(fromIntegral a2,fromIntegral b2)),d2))) adGrouped
-    --let adGrouped = L.groupBy (\((a1,b1),_,_) -> \((a2,b2),_,_) -> a1 == a2 && b1 == b2) (L.sort ad)
-    in adGroupedSorted >>= map (\(_,_,p) -> p)
+    let adGrouped = L.groupBy (\((a1,b1),_,_) -> \((a2,b2),_,_) -> a1 == a2 && b1 == b2) ad
+        -- sort the groups
+    --let adGroupedSorted1 = L.sortBy (\((_,d1,_):_) -> \((_,d2,_):_) -> compare d1 d2) adGrouped in adGroupedSorted1
+        -- sort inside the groups
+    --let adGroupedSorted2 = L.map (L.sortBy (\((a1,b1),d1,_) -> \((a2,b2),d2,_) -> compare (intToPolar(a1,b1),d1) (intToPolar(a2,b2),d2))) adGroupedSorted1
+    in L.transpose adGrouped >>= map (\(_,_,p) -> p)
 
 run :: IO ()
 run = do
