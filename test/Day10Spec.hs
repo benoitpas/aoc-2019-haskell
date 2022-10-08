@@ -162,9 +162,49 @@ spec = do
         ((4.2487413713838835,2.23606797749979),(2,2)),((4.2487413713838835,4.47213595499958),(1,0))]
 
   describe "listVapAsteroids" $ do
-    it "list asteroids in the 'vaporized' order for example 1" $ do
+    it "list asteroids in the 'vaporized' order for example 1 at (3,4)" $ do
       listVapAsteroids (3,4) ex1points `shouldBe` [(3,2),(4,0),(4,2),(4,3),(4,4),(0,2),(1,2),(2,2),(1,0)]
+    it "list asteroids in the 'vaporized' order for example 1 at (4,2)" $ do
+      listVapAsteroids (4,2) ex1points `shouldBe` [(4,0),(4,3),(3,4),(3,2),(1,0),(4,4),(2,2),(1,2),(0,2)]
     it "list asteroids in the 'vaporized' order for example 4" $ do
       take 10 (listVapAsteroids (8,3) ex4points) `shouldBe` [(8,1),(9,0),(9,1),(10,0),(9,2),(11,1),(12,1),(11,2),(15,1),(12,2)]
     it "find 200th asteroid in the 'vaporized' order for example 5" $ do
       (listVapAsteroids (11,13) ex5points) !! 203 `shouldBe` (8,2)
+
+  describe "findPrimes" $ do
+    it "find primes up to 36" $ do
+      findPrimes 36 `shouldBe` [2,3,5,7,11,13,17,19,23,29,31]
+
+  describe "reduce" $ do
+    it "reduces (5,10)" $ do
+      reduce (5,10) `shouldBe` (1,2)
+    it "reduces (-12,3)" $ do
+      reduce (-12,3) `shouldBe` (-4,1)
+    it "reduces (-12,4)" $ do
+      reduce (-12,4) `shouldBe` (-3,1)
+    it "reduces (12,36)" $ do
+      reduce (12,36) `shouldBe` (1,3)
+    it "reduces (-10,0)" $ do
+      reduce (-10,0) `shouldBe` (-1,0)
+    it "reduces (0,9)" $ do
+      reduce (0,9) `shouldBe` (0,1)
+
+  describe "anglesAndDistancesInt" $ do
+    it "find angles for example 1 at (3,4)" $ do
+      anglesAndDistancesInt (3,4) ex1points `shouldBe` [((-3,-2),4,(0,2)),((-1,-2),1,(1,0)),((-1,-2),8,(2,2)),((-1,-1),5,(1,2)),
+        ((0,-1),13,(3,2)),((1,-4),16,(4,0)),((1,-2),20,(4,2)),((1,-1),25,(4,3)),((1,0),32,(4,4))]
+    it "find angles for example 5 at (11,13)" $ do
+      take 20 (anglesAndDistancesInt (11,13) ex5points) `shouldBe` [((-11,-12),1,(0,1)),((-11,-9),16,(0,4)),((-11,-7),36,(0,6)),
+        ((-11,-6),49,(0,7)),((-11,-5),64,(0,8)),((-11,-4),81,(0,9)),((-11,-2),121,(0,11)),((-11,1),196,(0,14)),((-11,5),324,(0,18)),
+        ((-11,6),361,(0,19)),((-10,-13),1,(1,0)),((-10,-11),5,(1,2)),((-10,-9),17,(1,4)),((-10,-7),37,(1,6)),((-10,-1),145,(1,12)),
+        ((-9,-10),13,(2,3)),((-9,-8),29,(2,5)),((-9,-7),40,(2,6)),((-9,-4),85,(2,9)),((-9,-2),125,(2,11))]
+
+  describe "listVapAsteroidsInt" $ do
+    it "list asteroids in the 'vaporized' order for example 1 at (3,4)" $ do
+      listVapAsteroidsInt (3,4) ex1points `shouldBe` [(3,2),(4,0),(4,2),(4,3),(4,4),(0,2),(1,2),(1,0),(2,2)]
+    it "list asteroids in the 'vaporized' order for example 1 at (4,2)" $ do
+      listVapAsteroidsInt (4,2) ex1points `shouldBe` [(4,0),(4,3),(3,4),(0,2),(1,0),(4,4),(1,2),(2,2),(3,2)]
+    it "list asteroids in the 'vaporized' order for example 4 at (8,3)" $ do
+      take 10 (listVapAsteroidsInt (8,3) ex4points) `shouldBe` [(8,0),(9,0),(9,1),(10,0),(9,2),(11,1),(12,1),(11,2),(15,1),(12,2)]
+    it "find 200th asteroid in the 'vaporized' order for example 5 at (11,13)" $ do
+      (listVapAsteroidsInt (11,13) ex5points) !! 199 `shouldBe` (8,2)
