@@ -7,6 +7,8 @@ module Day10
         run
     ) where
 
+import Text.Printf
+
 import qualified Data.Set as S
 import qualified Data.List as L
 type Point = (Int,Int)
@@ -44,14 +46,17 @@ findMaxVisibleCount :: [Point] -> (Int,Point)
 findMaxVisibleCount points =
     foldr max (0,(0,0)) (map (\p -> (findVisibleCount2 p points, p)) points)
 
-toPolar :: (Ord b, Floating b) => (b, b) -> (b, b)
+toPolar :: (Ord b, Floating b) => Point -> (b, b)
 toPolar (x,y) =  
-    let d = sqrt (x^2 + y^2)
-        a =  if x >= 0 then 
-                if y>=0 then asin (y/d) else asin (y/d)
+    let d = sqrt (fromIntegral(x^2 + y^2)) in
+    let (x2,y2) = reduce (x,y) in
+    let (x3,y3) = (fromIntegral x2, fromIntegral y2) in
+    let d3 = sqrt (x3^2 + y3^2) in
+    let a =  if x >= 0 then 
+                if y>=0 then asin (y3/d3) else asin (y3/d3)
              else
-                if y>=0 then pi - asin (y/d) else pi - asin (y/d)
-    in (a,d)
+                if y>=0 then pi - asin (y3/d3) else pi - asin (y3/d3)
+    in (a,  d)
 
 intToPolar :: (Floating b, Integral a, Ord b) => (a, a) -> b
 intToPolar (x,y) = fst $ toPolar (fromIntegral x, fromIntegral y)
@@ -117,5 +122,5 @@ run = do
     let points = toPoints (lines content)
     let mvc = findMaxVisibleCount points
     print ("puzzle 1: " ++ show (fst mvc))
-    let p2 = (listVapAsteroidsInt (snd mvc) points) !! 199
+    let p2 = (listVapAsteroids (snd mvc) points) !! 199
     print ("puzzle 2: " ++ show (fst p2 * 100 + snd p2))

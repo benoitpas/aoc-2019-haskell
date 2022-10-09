@@ -177,7 +177,7 @@ spec = do
     it "list asteroids in the 'vaporized' order for example 4" $ do
       take 10 (listVapAsteroids (8,3) ex4points) `shouldBe` ex4_vap_8_3
     it "find 200th asteroid in the 'vaporized' order for example 5" $ do
-      (listVapAsteroids (11,13) ex5points) !! 203 `shouldBe` (8,2)
+      (listVapAsteroids (11,13) ex5points) !! 199 `shouldBe` (8,2)
 
   describe "findPrimes" $ do
     it "find primes up to 36" $ do
