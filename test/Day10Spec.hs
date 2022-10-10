@@ -95,45 +95,12 @@ spec = do
   describe "toPoints" $ do
     it "extract points from grid" $ do
       toPoints ex1 `shouldBe` ex1points
-  
-  describe "aligned" $ do
-    it "check if points are aligned 1" $ do
-      aligned (2,1) (4,2) (6,3) `shouldBe` True
-    it "check if points are aligned 2" $ do
-      aligned (4,2) (2,1) (6,3) `shouldBe` True
-    it "check if points are aligned 3" $ do
-      aligned (6,3) (4,2) (2,1) `shouldBe` True
-    it "check if points are not aligned" $ do
-      aligned (2,1) (4,2) (6,2) `shouldBe` False
-
-  describe "findAligned" $ do
-    it "find aligned points ex1 step 1" $ do
-      findAligned (3,4) ex1a `shouldBe` ex1b 
-    it "find aligned points ex1 step 2" $ do
-      findAligned (3,4) ex1b `shouldBe` ex1c
-    it "find aligned points ex1 step 3" $ do
-      findAligned (3,4) ex1c `shouldBe` ex1d
-    it "find aligned points ex1 step 4" $ do
-      findAligned (3,4) ex1d `shouldBe` ex1e
-
-    it "find aligned points ex2 step 1" $ do
-      findAligned (4,2) ex2a `shouldBe` ex2b
-    it "find aligned points ex2 step 2" $ do
-      findAligned (4,2) ex2b `shouldBe` ex2c
-    it "find aligned points ex2 step 3" $ do
-      findAligned (4,2) ex2c `shouldBe` ex2d
 
   describe "findVisibleCount" $ do
     it "find number of visible asteroids at 3,4" $ do
       findVisibleCount (3,4) ex1points `shouldBe` 8
     it "find number of visible asteroids at 4,2" $ do
       findVisibleCount (4,2) ex1points `shouldBe` 5
-
-  describe "findVisibleCount2" $ do
-    it "find number of visible asteroids at 3,4" $ do
-      findVisibleCount2 (3,4) ex1points `shouldBe` 8
-    it "find number of visible asteroids at 4,2" $ do
-      findVisibleCount2 (4,2) ex1points `shouldBe` 5
 
   describe "findMaxVisibleCount" $ do
     it "find max number of visible asteroids in example 1" $ do
@@ -196,7 +163,6 @@ spec = do
       reduce (-10,0) `shouldBe` (-1,0)
     it "reduces (0,9)" $ do
       reduce (0,9) `shouldBe` (0,1)
-
  
   describe "listVapAsteroids" $ do    
     it "find the first 3 asteroids in the 'vaporized' order for example 5 at (11,13)" $ do
