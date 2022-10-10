@@ -3,11 +3,9 @@ module Day10
         Point, toPolar,
         toPoints, aligned, findAligned, findVisibleCount, findMaxVisibleCount,
         anglesAndDistances, findVisibleCount2, listVapAsteroids,
-        findPrimes, reduce, anglesAndDistancesInt, listVapAsteroidsInt,
+        findPrimes, reduce,
         run
     ) where
-
-import Text.Printf
 
 import qualified Data.Set as S
 import qualified Data.List as L
@@ -58,9 +56,6 @@ toPolar (x,y) =
                 if y>=0 then pi - asin (y3/d3) else pi - asin (y3/d3)
     in (a,  d)
 
-intToPolar :: (Floating b, Integral a, Ord b) => (a, a) -> b
-intToPolar (x,y) = fst $ toPolar (fromIntegral x, fromIntegral y)
-
 anglesAndDistances :: Point -> [Point] -> [((Double,Double),Point)]
 anglesAndDistances (x1,y1) points = 
     L.sort $ L.map (\(x, y) -> 
@@ -88,33 +83,18 @@ findPrimes m =
                                     _ -> (primes,numbers)
     in fst $ next ([], [2 .. m])
 
-primes = findPrimes 100
+initialPrimes :: [Int]
+initialPrimes = findPrimes 100
+
 reduce :: (Int,Int) -> (Int,Int)
 reduce (a,b) = 
     let (a2,b2) = case (a == 0, b == 0) of
                     (True, False) -> (a, b `div` abs b)
                     (False, True) -> (a `div` abs a, b)
                     _ -> (a,b)
-        p = takeWhile (<= min (abs a2) (abs b2)) primes
+        p = takeWhile (<= min (abs a2) (abs b2)) initialPrimes
         usePrime p (a,b) = if a `mod` p == 0 && b `mod` p == 0 then usePrime p (a `div` p, b `div` p) else (a,b)
     in L.foldl (\(a,b) -> \n -> usePrime n (a,b)) (a2,b2) p
-
-anglesAndDistancesInt :: Point -> [Point] -> [((Int,Int),Int,Point)]
-anglesAndDistancesInt (x1,y1) points = 
-    let sortedPoints = L.sortBy (\(x2,y2) -> \(x3,y3) -> compare (toPolar(fromIntegral (x2-x1), fromIntegral (y2-y1))) (toPolar(fromIntegral (x3-x1), fromIntegral (y3-y1)))) (L.delete (x1,y1) points) in
-    let r = L.map (\(x, y) -> let xa = x - x1
-                                  ya = y - y1
-                              in (reduce(xa,ya), xa^2 + ya^2, (x,y))) sortedPoints
-    in r
-
-listVapAsteroidsInt p1 points =
-    let ad = anglesAndDistancesInt p1 points in
-    let adGrouped = L.groupBy (\((a1,b1),_,_) -> \((a2,b2),_,_) -> a1 == a2 && b1 == b2) ad
-        -- sort the groups
-    --let adGroupedSorted1 = L.sortBy (\((_,d1,_):_) -> \((_,d2,_):_) -> compare d1 d2) adGrouped in adGroupedSorted1
-        -- sort inside the groups
-    --let adGroupedSorted2 = L.map (L.sortBy (\((a1,b1),d1,_) -> \((a2,b2),d2,_) -> compare (intToPolar(a1,b1),d1) (intToPolar(a2,b2),d2))) adGroupedSorted1
-    in L.transpose adGrouped >>= map (\(_,_,p) -> p)
 
 run :: IO ()
 run = do

@@ -88,7 +88,7 @@ ex5 = [".#..##.###...#######",
 
 ex5points = toPoints ex5
 
-ex5vap = listVapAsteroidsInt (11,13) ex5points
+ex5vap = listVapAsteroids (11,13) ex5points
 
 spec :: Spec
 spec = do
@@ -197,24 +197,8 @@ spec = do
     it "reduces (0,9)" $ do
       reduce (0,9) `shouldBe` (0,1)
 
-  describe "anglesAndDistancesInt" $ do
-    it "find angles for example 1 at (3,4)" $ do
-      anglesAndDistancesInt (3,4) ex1points `shouldBe` [((0,-1),4,(3,2)),((1,-4),17,(4,0)),((1,-2),5,(4,2)),((1,-1),2,(4,3)),
-        ((1,0),1,(4,4)),((-3,-2),13,(0,2)),((-1,-1),8,(1,2)),((-1,-2),5,(2,2)),((-1,-2),20,(1,0))]
-    it "find angles for example 5 at (11,13)" $ do
-      take 20 (anglesAndDistancesInt (11,13) ex5points) `shouldBe` [((0,-1),1,(11,12)),((0,-1),4,(11,11)),((0,-1),9,(11,10)),
-        ((0,-1),16,(11,9)),((0,-1),25,(11,8)),((0,-1),36,(11,7)),((0,-1),49,(11,6)),((0,-1),64,(11,5)),((0,-1),81,(11,4)),
-        ((0,-1),100,(11,3)),((0,-1),121,(11,2)),((0,-1),144,(11,1)),((1,-12),145,(12,1)),((1,-11),122,(12,2)),((1,-9),82,(12,4)),
-        ((1,-8),65,(12,5)),((1,-7),50,(12,6)),((2,-13),173,(13,0)),((1,-6),37,(12,7)),((1,-6),148,(13,1))]
-
-  describe "listVapAsteroidsInt" $ do
-    it "list asteroids in the 'vaporized' order for example 1 at (3,4)" $ do
-      listVapAsteroidsInt (3,4) ex1points `shouldBe` [(3,2),(4,0),(4,2),(4,3),(4,4),(0,2),(1,2),(2,2),(1,0)]
-    it "list asteroids in the 'vaporized' order for example 1 at (4,2)" $ do
-      listVapAsteroidsInt (4,2) ex1points `shouldBe` [(4,0),(4,3),(3,4),(3,2),(1,0),(4,4),(2,2),(1,2),(0,2)]
-    it "list asteroids in the 'vaporized' order for example 4 at (8,3)" $ do
-      take 10 (listVapAsteroidsInt (8,3) ex4points) `shouldBe` [(8,1),(9,0),(9,1),(10,0),(9,2),(11,1),(12,1),(11,2),(15,1),(12,2)]
-    
+ 
+  describe "listVapAsteroids" $ do    
     it "find the first 3 asteroids in the 'vaporized' order for example 5 at (11,13)" $ do
       (take 3 ex5vap) `shouldBe` [(11,12),(12,1),(12,2)]
     it "find the 10th asteroid in the 'vaporized' order for example 5 at (11,13)" $ do
