@@ -1,7 +1,7 @@
 module Day7
     (
         initAmps, runAmps1, maxSignal1,
-        nextCycle, runAmps2, maxSignal2,
+        nextSteps, nextCycle, runAmps2, maxSignal2,
         run
     ) where
 

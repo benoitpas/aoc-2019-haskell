@@ -1,6 +1,6 @@
 module Day5
     (
-        State (..), stateFromMemory,
+        State (..), stateFromMemory, stateFromProgram,
         nextStep, allSteps,
         runProgram,
         run
@@ -18,8 +18,11 @@ data State = State {
     output:: [Integer]
 }
 
-stateFromMemory :: Memory -> Integer-> State
+stateFromMemory :: Memory -> Integer -> State
 stateFromMemory m i = State m 0 0 i []
+
+stateFromProgram :: String -> Integer -> State
+stateFromProgram program i = stateFromMemory (str2memory program) i
 
 instance Show State where
   show (State a b c d e) = "{" ++ show a ++ "," ++ show b ++  "," ++ show c ++ "," ++ show d ++ "," ++ show e ++ "}"
@@ -56,14 +59,13 @@ nextStep state =
     in (newState, cmd)
                
 allSteps :: State -> State
-allSteps iState = last $ takeWhile (\state -> ip state >= 0 || False) (iterate (fst . nextStep) iState)
+allSteps iState = last $ takeWhile (\state -> ip state >= 0) (iterate (fst . nextStep) iState)
 
 runProgram :: String -> Integer -> [Integer]
 runProgram program i =
-    let iState = stateFromMemory (str2memory program) i
-    in
-        let lastState = allSteps iState
-        in output lastState
+    let iState = stateFromProgram program i in
+    let lastState = allSteps iState
+    in output lastState
 
 run :: IO ()
 run = do

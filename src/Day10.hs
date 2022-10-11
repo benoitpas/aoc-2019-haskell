@@ -7,7 +7,6 @@ module Day10
         run
     ) where
 
-import qualified Data.Set as S
 import qualified Data.List as L
 type Point = (Int,Int)
 

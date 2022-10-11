@@ -100,3 +100,6 @@ The puzzle for part 2 hints to a more efficient solution: computing the angle an
 The issue is that if the angle is going to a 'double' and so even for aligned points [it may be slightly different](https://floating-point-gui.de/).
 
 I thought that as we are dealing with integer coordinates, another option would be to represent the angle as a *pair of integer* like (x,y) where x and y have no common denominator so that the pair is unique for every angle of our grid. It turned out it is quite complicated to do all operations (including sorting) using these coordinates so I found a way to make the float angle computations deterministic: instead of find the angle for the direct coordinates (like finding the angle for point (-10,-5)), before finding the angle I simplify the pair like it was a fraction. With that example, I will compute the angle for (-2,-1). That means all points aligned with (-2,-1) will have the same float value for the angle.
+
+# Day 11
+The first part is quite straightforward, it is a matter of reusing the IntCode interpreter and 'wire' it to handle a new type of input/output.
