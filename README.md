@@ -103,3 +103,5 @@ I thought that as we are dealing with integer coordinates, another option would 
 
 # Day 11
 The first part is quite straightforward, it is a matter of reusing the IntCode interpreter and 'wire' it to handle a new type of input/output.
+
+The second part is also fairly simple, the initial grid changes and the output needs to be displayed as an ascii grid.
