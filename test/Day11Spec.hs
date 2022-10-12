@@ -5,7 +5,9 @@ import Test.Hspec
 import qualified Data.Map as M
 
 import Day11
+import Day3 (Point)
 
+m :: M.Map Point Int
 m = M.fromList [((0,0),1),((1,1),1),((-1,1),1)]
 
 spec :: Spec
