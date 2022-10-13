@@ -105,3 +105,6 @@ I thought that as we are dealing with integer coordinates, another option would 
 The first part is quite straightforward, it is a matter of reusing the IntCode interpreter and 'wire' it to handle a new type of input/output.
 
 The second part is also fairly simple, the initial grid changes and the output needs to be displayed as an ascii grid.
+
+# Day 12
+Here using small functions to decompose the problem works really well. Actually, I even manage to implement a solution which could work with any number of dimensions, not just 3. As [Erik Meijer](https://en.wikipedia.org/wiki/Erik_Meijer_(computer_scientist)) said, [let the types guide you](https://twitter.com/headinthebox/status/543919077752729600). To store the point coordinates and velocity, I hesitated between arrays and list of lists. Finally I choose lists as they are better supported in Haskell and made the code more readable.
