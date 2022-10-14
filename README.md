@@ -108,3 +108,5 @@ The second part is also fairly simple, the initial grid changes and the output n
 
 # Day 12
 Here using small functions to decompose the problem works really well. Actually, I even manage to implement a solution which could work with any number of dimensions, not just 3. As [Erik Meijer](https://en.wikipedia.org/wiki/Erik_Meijer_(computer_scientist)) said, [let the types guide you](https://twitter.com/headinthebox/status/543919077752729600). To store the point coordinates and velocity, I hesitated between arrays and list of lists. Finally I choose lists as they are better supported in Haskell and made the code more readable.
+
+The main difficulty for part 2 is that a brute force approach cannot work to find the size of the repeat cycle. Luckily each dimension is independent, so we can find the cycle size for each dimension and then find the combined cycle. For that we used a 'reduce' function similar to the one developped in the solution for Day 3.

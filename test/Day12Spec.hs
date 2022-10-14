@@ -73,3 +73,15 @@ spec = do
     describe "computeEnergy" $ do
         it "computes the energy for example 2 after 100 steps" $ do
             computeEnergy ex2 100 `shouldBe` 1940
+
+    describe "findRepeat" $ do
+        it "uses brute force to find repeating locations/velocity" $ do
+            findRepeat ex1 `shouldBe` 2772
+
+    describe "findRepeatCol" $ do
+        it "uses brute force to find repeating locations/velocity for column 1" $ do
+            findRepeatCol ex1 0 `shouldBe` 18
+        it "uses brute force to find repeating locations/velocity for column 2" $ do
+            findRepeatCol ex1 1 `shouldBe` 28
+        it "uses brute force to find repeating locations/velocity for column 2" $ do
+            findRepeatCol ex1 2 `shouldBe` 44
