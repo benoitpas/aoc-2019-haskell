@@ -20,6 +20,8 @@ ghci> Day1.run
 3265923
 ```
 
+It is important to note that the error handling in the solution is minimal by choice, as the inputs are quite constraint I concentrate more on implementing an elegant solution (and learn new haskell features) than having an exhaustive error handling.
+
 # Day 1
 This was mostly about setting up the environment and understanding how to use the unit test framework (which I didn't learn about in the course)
 
@@ -112,3 +114,6 @@ Here using small functions to decompose the problem works really well. Actually,
 The main difficulty for part 2 is that a brute force approach cannot work to find the size of the repeat cycle. Luckily each dimension is independent, so we can find the cycle size for each dimension and then find the combined cycle. For that we used a 'reduce' function similar to the one developped in the solution for Day 3.
 
 If part 1 had been written with part 2 in mind it could be better structured to reduce the number of transformations on the data structures, i.e. having findRepeat depend on findRepeatCol (instead of the reverse at the moment) and remove findRepeat2.
+
+# Day 13
+with the existing opcode interpreter, there are really no difficulties in the first part. I tried to use `where` in the solution as I'm quite comfortable with `let` as `let` is also present in the ML family of languages. I also find the `let .. in` a very elegant as it really makes it very explicit it is an expression.
