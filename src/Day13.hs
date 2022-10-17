@@ -1,6 +1,6 @@
 module Day13
     (
-        toTiles,
+        Tile(..), toTiles,
         run
     ) where
 
