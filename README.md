@@ -117,3 +117,12 @@ If part 1 had been written with part 2 in mind it could be better structured to 
 
 # Day 13
 with the existing opcode interpreter, there are really no difficulties in the first part. I tried to use `where` in the solution as I'm quite comfortable with `let` as `let` is also present in the ML family of languages. I also find the `let .. in` a very elegant as it really makes it very explicit it is an expression.
+
+Part 2 is really more involved ! Knowing the number of blocks to break is in the hundreds (c.f. part 1), either I can implement a full working version of the game or I can try to understand the logic of how points are counted. 
+
+The first approach is interesting to learn how to do an interactive application with Haskell. In some ways it is the less risky but potentially the one that requires more work.
+
+How quickly I can solve the problem with the second approach really depends on how complicated is the scoring mechanism.
+
+Thinking about it, a third approach may be easier: this looks like a game of 'pong' so I could implement a logic where the 'paddle' follows the ball and let the program run until there are no bricks left. No visualization or user interaction required !
+
