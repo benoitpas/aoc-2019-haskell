@@ -10,43 +10,58 @@ import qualified Data.List as L
 import qualified Data.Map as M
 
 import Day3 (Point)
-import Day5 (stateFromProgram, allSteps, State(..))
+import Day5 (stateFromProgram, allSteps, nextStep, State(..))
 import Day7 (nextSteps)
 
-data Tile = Empty | Wall | Block | Paddle | Ball deriving (Eq, Show)  
+data Tile = Empty Point | Wall Point| Block Point| Paddle Point | Ball Point | Score Int deriving (Eq, Show)  
 
-toTile :: Integer -> Tile
-toTile i = case i of
-    1 -> Wall
-    2 -> Block
-    3 -> Paddle
-    4 -> Ball
-    _ -> Empty
+toTiles :: [Integer] -> [Tile]
+toTiles l = case l of
+            -1: 0: score:remain-> Score (fromIntegral score) : toTiles remain
+            x : y: 1:remain -> Wall (fromIntegral x, fromIntegral y) : toTiles remain
+            x : y: 2:remain -> Block (fromIntegral x, fromIntegral y) : toTiles remain
+            x : y: 3:remain -> Paddle (fromIntegral x, fromIntegral y) : toTiles remain
+            x : y: 4:remain -> Ball (fromIntegral x, fromIntegral y) : toTiles remain
+            x : y: _:remain -> Empty (fromIntegral x, fromIntegral y) : toTiles remain
+            [] -> []
 
-toTiles :: [Integer] -> [((Integer, Integer), Tile)]
-toTiles [] = []
-toTiles codes = ((x,y), (toTile tile)):(toTiles remain)
-                    where (x:y:tile:_,remain) = L.splitAt 3 codes
+isBlock (Block _) = True
+isBlock _ = False
 
-run :: IO ()
+isBall (Ball _) = True
+isBall _ = False
+
+isPaddle (Paddle _) = True
+isPaddle _ = False
+
+nextTile state = last $ takeWhile (\s -> length (output s) <= 3) (iterate (fst . nextStep) state {output = []})
+
+nextBall state = let nState = nextTile state in if (isBall . last . toTiles . output) nState then nState else nextBall nState
+
+findTile isTile state = head (filter isTile (tail (iterate nextTile state )))
 run = do
     content <- readFile "src/day13_input.txt"
     let iState = stateFromProgram (head (lines content)) 0
     let state1 = allSteps iState
     let iTiles = toTiles (output state1)
-    let filterTile tile = filter (\(_,t) -> t == tile)
-    let iBlocks =  filterTile Block iTiles
+    let iBlocks =  filter isBlock iTiles
     print ("puzzle 1: " ++ show (length iBlocks))
-    let ball =  fst (head (filterTile Ball iTiles))
+    let ball =  filter isBall iTiles
     print ( "Ball " ++ show ball)
-    let paddle =  fst (head (filterTile Paddle iTiles))
+    let paddle =  filter isPaddle iTiles
     print ( "Paddle " ++ show paddle)
     -- part 2
     let iState2 = iState { memory = M.insert 0 2 (memory iState)}
-    let state2 = allSteps iState2
-    let iTiles2 = toTiles (output state2)
-    let balls =  (filterTile Ball iTiles2)
-    print ( "Ball " ++ show balls)
-    let paddles =  (filterTile Paddle iTiles2)
-    print ( "Paddle " ++ show paddles)
+    let stateBall = nextBall iState2
+    print ("stateBall=" ++ show (output stateBall))
+    let statePaddle = findTile (isPaddle . head . toTiles . output) stateBall
+    print ("statePaddle=" ++ show (output statePaddle))
+    let state3 = allSteps statePaddle { input = 1 }
+    let tiles3 = toTiles (output state3)
+    let balls =  filter isBall tiles3
+    print (show balls)
+    let paddles =  filter isPaddle tiles3
+    
+    print ("Paddle " ++ show paddles)
+    print (show tiles3)
  
