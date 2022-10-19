@@ -34,11 +34,32 @@ isBall _ = False
 isPaddle (Paddle _) = True
 isPaddle _ = False
 
+-- replace last $ takeWhile with a simple call ?
 nextTile state = last $ takeWhile (\s -> length (output s) <= 3) (iterate (fst . nextStep) state {output = []})
+
+paddleDirection :: [Point] -> [Point] -> Integer
+paddleDirection balls paddle = 
+    case (balls, paddle) of
+        (b:_, p:_) -> toInteger $ (fst b - fst p) `div` (abs (fst b - fst p))
+        _ -> 0
+
+processNextTile :: (State, [Point], [Point], Int, e) -> (State, [Point], [Point], Int, Bool)
+processNextTile (state, balls, paddle, score, finished) = 
+    let nState = nextTile state 
+    in case (toTiles . output) nState of
+        [] -> (nState, balls, paddle, score, True)
+        [Ball newBall] -> let nBalls = newBall:balls in (nState {input = paddleDirection balls paddle}, nBalls, paddle, score, False)
+        [Paddle newPaddle] -> (nState {input = paddleDirection balls [newPaddle]}, balls, newPaddle:paddle, score, False)
+        [Score nScore] -> (nState, balls, paddle, nScore, False)
+        _ -> (nState, balls, paddle, score, False)
+
+    
 
 nextBall state = let nState = nextTile state in if (isBall . last . toTiles . output) nState then nState else nextBall nState
 
 findTile isTile state = head (filter isTile (tail (iterate nextTile state )))
+
+run :: IO ()
 run = do
     content <- readFile "src/day13_input.txt"
     let iState = stateFromProgram (head (lines content)) 0
@@ -52,16 +73,34 @@ run = do
     print ( "Paddle " ++ show paddle)
     -- part 2
     let iState2 = iState { memory = M.insert 0 2 (memory iState)}
-    let stateBall = nextBall iState2
-    print ("stateBall=" ++ show (output stateBall))
-    let statePaddle = findTile (isPaddle . head . toTiles . output) stateBall
-    print ("statePaddle=" ++ show (output statePaddle))
-    let state3 = allSteps statePaddle { input = 1 }
-    let tiles3 = toTiles (output state3)
-    let balls =  filter isBall tiles3
-    print (show balls)
-    let paddles =  filter isPaddle tiles3
+
+    let ts = iterate processNextTile (iState2, [], [], 0, False)
+    let ts814 = last (take  832 ts)
+
+    let (s814,_,_,_,_) = ts814
+    print (show (output s814))
+    let (s815,_) = nextStep s814
+    print (show (output s815))
+    let (s816,_) = nextStep s815
+    print (show (output s816))
+    let (s817,_) = nextStep s816
+    print (show (output s817))
+    let end = allSteps s817
+    print (show end)
+    --let score = case L.find (\(_,_,_,_, f) -> f) ts of
+--                    Just (_,_,_,score,_) -> score
+--                    _ -> 0
+    --print (show score)
+
+    --let stateBall = nextBall iState2
+    --print ("stateBall=" ++ show (output stateBall))
+    --let statePaddle = findTile (isPaddle . head . toTiles . output) stateBall
+    --print ("statePaddle=" ++ show (output statePaddle))
+    --let state3 = allSteps statePaddle { input = 1 }
+    --let tiles3 = toTiles (output state3)
+    --let balls =  filter isBall tiles3
+    --print (show balls)
+    --let paddles =  filter isPaddle tiles3
     
-    print ("Paddle " ++ show paddles)
-    print (show tiles3)
- 
+    --print ("Paddle " ++ show paddles)
+    --print (show tiles3)
