@@ -1,17 +1,13 @@
 module Day13
     (
-        Tile(..), toTiles,
+        Tile(..), toTiles, paddleDirection,
         run
     ) where
 
-import qualified Data.Array as A
-import qualified Data.Set as S
-import qualified Data.List as L
 import qualified Data.Map as M
 
 import Day3 (Point)
 import Day5 (stateFromProgram, allSteps, nextStep, State(..))
-import Day7 (nextSteps)
 
 data Tile = Empty Point | Wall Point| Block Point| Paddle Point | Ball Point | Score Int deriving (Eq, Show)  
 
@@ -25,17 +21,20 @@ toTiles l = case l of
             x : y: _:remain -> Empty (fromIntegral x, fromIntegral y) : toTiles remain
             [] -> []
 
+isBlock :: Tile -> Bool
 isBlock (Block _) = True
 isBlock _ = False
 
+isBall :: Tile -> Bool
 isBall (Ball _) = True
 isBall _ = False
 
+isPaddle :: Tile -> Bool
 isPaddle (Paddle _) = True
 isPaddle _ = False
 
--- replace last $ takeWhile with a simple call ?
-nextTile state = last $ takeWhile (\(s,i) -> length (output s) <= 3 && i >= 0) (iterate (\(s, _) -> nextStep s) (state {output = []}, 0))
+nextTile :: State -> (State, Integer)
+nextTile state = last $ takeWhile (\(s,c) -> length (output s) <= 3 && c /= 99) (iterate (\(s, _) -> nextStep s) (state {output = []}, 0))
 
 paddleDirection :: [Point] -> [Point] -> Integer
 paddleDirection balls paddle = 
@@ -49,20 +48,19 @@ paddleDirection balls paddle =
                             let xTarget = (fst b1) -- + (snd p) - (snd b1) 
                             in direction xTarget (fst p)
 
- --       (b:_, p:_) -> toInteger $ (fst b - fst p) `div` (abs (fst b - fst p))
+--        (b:_, p:_) -> toInteger $ (fst b - fst p) `div` (abs (fst b - fst p))
         _ -> 1
 
-processNextTile :: (State, [Point], [Point], Int, e) -> (State, [Point], [Point], Int, Bool)
+processNextTile :: (State, [Point], [Point], Int, Bool) -> (State, [Point], [Point], Int, Bool)
 processNextTile (state, balls, paddle, score, finished) = 
-    let nState = fst $ nextTile state 
+    let (nState, nCmd) = nextTile state in
+    let nFinished = (nCmd == 99) || finished
     in case (toTiles . output) nState of
         [] -> (nState, balls, paddle, score, True)
-        [Ball newBall] -> let nBalls = newBall:balls in (nState {input = paddleDirection balls paddle}, nBalls, paddle, score, False)
-        [Paddle newPaddle] -> (nState {input = paddleDirection balls [newPaddle]}, balls, newPaddle:paddle, score, False)
-        [Score nScore] -> (nState, balls, paddle, nScore, False)
-        _ -> (nState, balls, paddle, score, False)
-
-    
+        [Ball newBall] -> let nBalls = newBall:balls in (nState {input = paddleDirection balls paddle}, nBalls, paddle, score, nFinished)
+        [Paddle newPaddle] -> (nState {input = paddleDirection balls [newPaddle]}, balls, newPaddle:paddle, score, nFinished)
+        [Score nScore] -> (nState, balls, paddle, nScore, nFinished)
+        _ -> (nState, balls, paddle, score, nFinished)
 
 --nextBall state = let nState = nextTile state in if (isBall . last . toTiles . output) nState then nState else nextBall nState
 
@@ -80,21 +78,26 @@ run = do
     print ( "Ball " ++ show ball)
     let paddle =  filter isPaddle iTiles
     print ( "Paddle " ++ show paddle)
+
     -- part 2
     let iState2 = iState { memory = M.insert 0 2 (memory iState)}
 
-    let ts = iterate processNextTile (iState2, [], [], 0, False)
-    let ts814 = last (take  874 ts)
-    --let ts814 = last (take  848 ts)
-    print (show ts814)
---    let (s814,_,_,_,_) = ts814
+    let ts = filter (\(_,_,_,s,f) -> s>0) $ iterate processNextTile (iState2, [], [], 0, False)
+    let lastState = head ts
+    print (show lastState)
+    let ts2 = filter (\(_,_,_,s,f) -> s==0) $ iterate processNextTile lastState
+    print (show (head ts2))
+
+--    let (ls1,_,_,_,_) = lastState
 --    print (show (output s814))
---    let (s815,_) = nextStep s814
---    print (show (output s815))
---    let (s816,_) = nextStep s815
---    print (show (output s816))
---    let (s817,_) = nextStep s816
---    print (show (output s817))
+--    let (s815,f815) = nextStep s814
+--    print (show (output s815)++ " "++show f815)
+--    let (s816,f816) = nextStep s815
+--    print (show (output s816)++ " "++show f816)
+--    let (s817,f817) = nextStep s816
+--    print (show ( output s817)++ " "++show f817)
+--    let (s818,f818) = nextStep s817
+--    print (show (output s818)++ " "++show f818)
 --    let end = allSteps s817
 --    print (show end)
     --let score = case L.find (\(_,_,_,_, f) -> f) ts of

@@ -126,3 +126,4 @@ How quickly I can solve the problem with the second approach really depends on h
 
 Thinking about it, a third approach may be easier: this looks like a game of 'pong' so I could implement a logic where the 'paddle' follows the ball and let the program run until there are no bricks left. No visualization or user interaction required !
 
+Actually as it wasn't that easy to write a logic that plays without fully understanding the game logic, I was faced with the choice of either reverse engineering the intcode to understand the it or write the UI for the game. As I have never written an interactive application with functional programming, I thought that would be a good learning experience.
