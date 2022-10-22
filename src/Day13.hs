@@ -4,6 +4,7 @@ module Day13
         run
     ) where
 
+import System.Console.ANSI
 import qualified Data.Map as M
 
 import Day3 (Point)
@@ -80,6 +81,8 @@ run = do
     print ( "Paddle " ++ show paddle)
 
     -- part 2
+    clearScreen
+    setSGR [SetColor Foreground Vivid Blue]
     let iState2 = iState { memory = M.insert 0 2 (memory iState)}
 
     let ts = filter (\(_,_,_,s,f) -> s>0) $ iterate processNextTile (iState2, [], [], 0, False)
