@@ -52,16 +52,17 @@ paddleDirection balls paddle =
 --        (b:_, p:_) -> toInteger $ (fst b - fst p) `div` (abs (fst b - fst p))
         _ -> 1
 
-processNextTile :: (State, [Point], [Point], Int, Bool) -> (State, [Point], [Point], Int, Bool)
-processNextTile (state, balls, paddle, score, finished) = 
+processNextTile :: (State, [Point], [Point], Int, Bool, IO ()) -> (State, [Point], [Point], Int, Bool, IO ())
+processNextTile (state, balls, paddle, score, finished, io) = 
     let (nState, nCmd) = nextTile state in
+    let nIo = io >>= (\_ -> putStr ".") in
     let nFinished = (nCmd == 99) || finished
     in case (toTiles . output) nState of
-        [] -> (nState, balls, paddle, score, True)
-        [Ball newBall] -> let nBalls = newBall:balls in (nState {input = paddleDirection balls paddle}, nBalls, paddle, score, nFinished)
-        [Paddle newPaddle] -> (nState {input = paddleDirection balls [newPaddle]}, balls, newPaddle:paddle, score, nFinished)
-        [Score nScore] -> (nState, balls, paddle, nScore, nFinished)
-        _ -> (nState, balls, paddle, score, nFinished)
+        [] -> (nState, balls, paddle, score, True, nIo)
+        [Ball newBall] -> let nBalls = newBall:balls in (nState {input = paddleDirection balls paddle}, nBalls, paddle, score, nFinished, nIo)
+        [Paddle newPaddle] -> (nState {input = paddleDirection balls [newPaddle]}, balls, newPaddle:paddle, score, nFinished, nIo)
+        [Score nScore] -> (nState, balls, paddle, nScore, nFinished, nIo)
+        _ -> (nState, balls, paddle, score, nFinished, nIo)
 
 --nextBall state = let nState = nextTile state in if (isBall . last . toTiles . output) nState then nState else nextBall nState
 
@@ -85,11 +86,11 @@ run = do
     setSGR [SetColor Foreground Vivid Blue]
     let iState2 = iState { memory = M.insert 0 2 (memory iState)}
 
-    let ts = filter (\(_,_,_,s,f) -> s>0) $ iterate processNextTile (iState2, [], [], 0, False)
-    let lastState = head ts
+    let ts = filter (\(_,_,_,s,f,_) -> s>0) $ iterate processNextTile (iState2, [], [], 0, False, clearScreen)
+    let (lastState,_,_,_,_,_) = head ts
     print (show lastState)
-    let ts2 = filter (\(_,_,_,s,f) -> s==0) $ iterate processNextTile lastState
-    print (show (head ts2))
+--    let ts2 = filter (\(_,_,_,s,f,_) -> s==0) $ iterate processNextTile lastState
+--    print (show (head ts2))
 
 --    let (ls1,_,_,_,_) = lastState
 --    print (show (output s814))
