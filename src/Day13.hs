@@ -1,7 +1,7 @@
 module Day13
     (
         Tile(..), toTiles, paddleDirection,
-        run
+        run, run2
     ) where
 
 import System.Console.ANSI
@@ -68,6 +68,18 @@ processNextTile (state, balls, paddle, score, finished, io) =
 
 --findTile isTile state = head (filter isTile (tail (iterate nextTile state )))
 
+testRun :: IO () -> IO ()
+testRun id = id
+
+run2 :: IO ()
+run2 = readFile "src/day13_input.txt" >>= 
+    (\content -> let iState = stateFromProgram (head (lines content)) 0 
+    in let state1 = allSteps iState
+    in let iState2 = iState { memory = M.insert 0 2 (memory iState) }
+    in let ts = filter (\(_,_,_,s,f,_) -> s>0) $ iterate processNextTile (iState2, [], [], 0, False, clearScreen)
+    in let (lastState,_,_,_,_,io) = head ts
+    in io >>= (\_ -> putStr "Finished !"))
+
 run :: IO ()
 run = do
     content <- readFile "src/day13_input.txt"
@@ -86,6 +98,7 @@ run = do
     setSGR [SetColor Foreground Vivid Blue]
     let iState2 = iState { memory = M.insert 0 2 (memory iState)}
 
+    tr <- testRun clearScreen
     let ts = filter (\(_,_,_,s,f,_) -> s>0) $ iterate processNextTile (iState2, [], [], 0, False, clearScreen)
     let (lastState,_,_,_,_,_) = head ts
     print (show lastState)
