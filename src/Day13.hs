@@ -55,30 +55,41 @@ paddleDirection balls paddle =
 processNextTile :: (State, [Point], [Point], Int, Bool, IO ()) -> (State, [Point], [Point], Int, Bool, IO ())
 processNextTile (state, balls, paddle, score, finished, io) = 
     let (nState, nCmd) = nextTile state in
-    let nIo = io >>= (\_ -> putStr ".") in
-    let nFinished = (nCmd == 99) || finished
-    in case (toTiles . output) nState of
-        [] -> (nState, balls, paddle, score, True, nIo)
-        [Ball newBall] -> let nBalls = newBall:balls in (nState {input = paddleDirection balls paddle}, nBalls, paddle, score, nFinished, nIo)
-        [Paddle newPaddle] -> (nState {input = paddleDirection balls [newPaddle]}, balls, newPaddle:paddle, score, nFinished, nIo)
-        [Score nScore] -> (nState, balls, paddle, nScore, nFinished, nIo)
-        _ -> (nState, balls, paddle, score, nFinished, nIo)
+    let nFinished = (nCmd == 99) || finished in
+    let nTiles = (toTiles . output) nState in
+    let nIO = case nTiles of
+                [tile] -> io >>= (\_ -> printTile tile)
+                _ -> io
+    in case nTiles of
+        [] -> (nState, balls, paddle, score, True, nIO)
+        [Ball newBall] -> let nBalls = newBall:balls in (nState {input = paddleDirection balls paddle}, nBalls, paddle, score, nFinished, nIO)
+        [Paddle newPaddle] -> (nState {input = paddleDirection balls [newPaddle]}, balls, newPaddle:paddle, score, nFinished, nIO);
+        [Score nScore] -> (nState, balls, paddle, nScore, nFinished, nIO)
+        _ -> (nState, balls, paddle, score, nFinished, nIO)
 
 --nextBall state = let nState = nextTile state in if (isBall . last . toTiles . output) nState then nState else nextBall nState
 
 --findTile isTile state = head (filter isTile (tail (iterate nextTile state )))
 
-testRun :: IO () -> IO ()
-testRun id = id
+printTile:: Tile -> IO ()
+printTile t = case t of 
+                Empty p  -> oneTile p " "
+                Wall p   -> oneTile p "#"
+                Block p  -> oneTile p "+"
+                Paddle p -> oneTile p "="
+                Ball p   -> oneTile p "*"
+                _ -> putStr ""
+              where
+                oneTile p c = (setCursorPosition (snd p) (fst p)) >>= (\_ -> putStr c)
 
 run2 :: IO ()
 run2 = readFile "src/day13_input.txt" >>= 
     (\content -> let iState = stateFromProgram (head (lines content)) 0 
     in let state1 = allSteps iState
     in let iState2 = iState { memory = M.insert 0 2 (memory iState) }
-    in let ts = filter (\(_,_,_,s,f,_) -> s>0) $ iterate processNextTile (iState2, [], [], 0, False, clearScreen)
+    in let ts = filter (\(_,_,_,s,f,_) -> f) $ iterate processNextTile (iState2, [], [], 0, False, clearScreen)
     in let (lastState,_,_,_,_,io) = head ts
-    in io >>= (\_ -> putStr "Finished !"))
+    in io >>= (\_ -> setCursorPosition 23 0) >>= (\_ -> putStrLn "Finished !"))
 
 run :: IO ()
 run = do
@@ -98,7 +109,6 @@ run = do
     setSGR [SetColor Foreground Vivid Blue]
     let iState2 = iState { memory = M.insert 0 2 (memory iState)}
 
-    tr <- testRun clearScreen
     let ts = filter (\(_,_,_,s,f,_) -> s>0) $ iterate processNextTile (iState2, [], [], 0, False, clearScreen)
     let (lastState,_,_,_,_,_) = head ts
     print (show lastState)
