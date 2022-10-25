@@ -4,8 +4,9 @@ module Day13
         run, run2
     ) where
 
-import System.Console.ANSI
+import Control.Concurrent
 import qualified Data.Map as M
+import System.Console.ANSI
 
 import Day3 (Point)
 import Day5 (stateFromProgram, allSteps, nextStep, State(..))
@@ -20,7 +21,7 @@ toTiles l = case l of
             x : y: 3:remain -> Paddle (fromIntegral x, fromIntegral y) : toTiles remain
             x : y: 4:remain -> Ball (fromIntegral x, fromIntegral y) : toTiles remain
             x : y: _:remain -> Empty (fromIntegral x, fromIntegral y) : toTiles remain
-            [] -> []
+            _ -> []
 
 isBlock :: Tile -> Bool
 isBlock (Block _) = True
@@ -49,12 +50,13 @@ paddleDirection balls paddle =
                             let xTarget = (fst b1) -- + (snd p) - (snd b1) 
                             in direction xTarget (fst p)
 
---        (b:_, p:_) -> toInteger $ (fst b - fst p) `div` (abs (fst b - fst p))
+--        (b:_, p:_) -> direction (fst b) (fst p)
         _ -> 1
 
+-- add location of ball and paddle+score
 processNextTile :: (State, [Point], [Point], Int, Bool, IO ()) -> (State, [Point], [Point], Int, Bool, IO ())
 processNextTile (state, balls, paddle, score, finished, io) = 
-    let (nState, nCmd) = nextTile state in
+    let (nState, nCmd) = nextTile state {input = paddleDirection balls paddle} in
     let nFinished = (nCmd == 99) || finished in
     let nTiles = (toTiles . output) nState in
     let nIO = case nTiles of
@@ -62,8 +64,8 @@ processNextTile (state, balls, paddle, score, finished, io) =
                 _ -> io
     in case nTiles of
         [] -> (nState, balls, paddle, score, True, nIO)
-        [Ball newBall] -> let nBalls = newBall:balls in (nState {input = paddleDirection balls paddle}, nBalls, paddle, score, nFinished, nIO)
-        [Paddle newPaddle] -> (nState {input = paddleDirection balls [newPaddle]}, balls, newPaddle:paddle, score, nFinished, nIO);
+        [Ball newBall] -> let nBalls = newBall:balls in (nState, nBalls, paddle, score, nFinished, nIO)
+        [Paddle newPaddle] -> (nState, balls, newPaddle:paddle, score, nFinished, nIO)
         [Score nScore] -> (nState, balls, paddle, nScore, nFinished, nIO)
         _ -> (nState, balls, paddle, score, nFinished, nIO)
 
@@ -73,19 +75,18 @@ processNextTile (state, balls, paddle, score, finished, io) =
 
 printTile:: Tile -> IO ()
 printTile t = case t of 
-                Empty p  -> oneTile p " "
-                Wall p   -> oneTile p "#"
-                Block p  -> oneTile p "+"
-                Paddle p -> oneTile p "="
-                Ball p   -> oneTile p "*"
+                Empty p  -> oneTile p " " 10000
+                Wall p   -> oneTile p "#" 0
+                Block p  -> oneTile p "+" 0
+                Paddle p -> oneTile p "=" 1000000
+                Ball p   -> oneTile p "*" 1000000
                 _ -> putStr ""
               where
-                oneTile p c = (setCursorPosition (snd p) (fst p)) >>= (\_ -> putStr c)
+                oneTile p c d = (setCursorPosition (snd p) (fst p)) >>= (\_ -> putStr c) >>= (\_ -> threadDelay d)
 
 run2 :: IO ()
 run2 = readFile "src/day13_input.txt" >>= 
     (\content -> let iState = stateFromProgram (head (lines content)) 0 
-    in let state1 = allSteps iState
     in let iState2 = iState { memory = M.insert 0 2 (memory iState) }
     in let ts = filter (\(_,_,_,s,f,_) -> f) $ iterate processNextTile (iState2, [], [], 0, False, clearScreen)
     in let (lastState,_,_,_,_,io) = head ts
