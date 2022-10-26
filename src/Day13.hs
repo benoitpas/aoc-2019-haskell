@@ -88,9 +88,12 @@ run2 :: IO ()
 run2 = readFile "src/day13_input.txt" >>= 
     (\content -> let iState = stateFromProgram (head (lines content)) 0 
     in let iState2 = iState { memory = M.insert 0 2 (memory iState) }
-    in let ts = filter (\(_,_,_,s,f,_) -> f) $ iterate processNextTile (iState2, [], [], 0, False, clearScreen)
+    in let ts = filter (\(_,_,_,s,f,_) -> f) $ iterate processNextTile (iState2, [], [], 0, False, clearScreen >>= (\_ -> hideCursor))
     in let (lastState,_,_,_,_,io) = head ts
-    in io >>= (\_ -> setCursorPosition 23 0) >>= (\_ -> putStrLn "Finished !"))
+    in io >>= (\_ -> showCursor)
+          >>= (\_ -> setSGR [Reset])
+          >>= (\_ -> setCursorPosition 23 0)
+          >>= (\_ -> putStrLn "Finished !"))
 
 run :: IO ()
 run = do
@@ -110,7 +113,7 @@ run = do
     setSGR [SetColor Foreground Vivid Blue]
     let iState2 = iState { memory = M.insert 0 2 (memory iState)}
 
-    let ts = filter (\(_,_,_,s,f,_) -> s>0) $ iterate processNextTile (iState2, [], [], 0, False, clearScreen)
+    let ts = filter (\(_,_,_,s,f,_) -> s>0 || f) $ iterate processNextTile (iState2, [], [], 0, False, clearScreen)
     let (lastState,_,_,_,_,_) = head ts
     print (show lastState)
 --    let ts2 = filter (\(_,_,_,s,f,_) -> s==0) $ iterate processNextTile lastState
