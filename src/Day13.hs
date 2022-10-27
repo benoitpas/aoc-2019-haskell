@@ -53,15 +53,46 @@ paddleDirection balls paddle =
 --        (b:_, p:_) -> direction (fst b) (fst p)
         _ -> 1
 
--- add location of ball and paddle+score
+printTile :: Tile -> IO ()
+printTile t = case t of
+                Empty p  -> oneTile p " " 10000
+                Wall p   -> oneTile p "#" 0
+                Block p  -> oneTile p "+" 0
+                Paddle p -> oneTile p "=" 1000000
+                Ball p   -> oneTile p "*" 1000000
+                Score s  -> do
+                                setCursorPosition 0 xLabels
+                                putStr "Score"
+                                setCursorPosition 1 xLabels
+                                putStr (show s ++ "    ")
+                _ -> putStr ""
+              where
+                oneTile p c d = (setCursorPosition (snd p) (fst p)) >>= (\_ -> putStr c) >>= (\_ -> threadDelay d)
+
+-- add location of ball and paddle+score+instruction pointer
+
+xLabels = 40
+printPoint :: String -> Int -> [Point] -> IO ()
+printPoint label yLabel points = do
+    setCursorPosition yLabel xLabels
+    putStr label
+    setCursorPosition (yLabel + 1) xLabels
+    let s = case points of
+                p:_ -> show (fst p) ++ "," ++ show (snd p) ++ "  "
+                _ -> ""
+    putStr s
+
 processNextTile :: (State, [Point], [Point], Int, Bool, IO ()) -> (State, [Point], [Point], Int, Bool, IO ())
 processNextTile (state, balls, paddle, score, finished, io) = 
     let (nState, nCmd) = nextTile state {input = paddleDirection balls paddle} in
     let nFinished = (nCmd == 99) || finished in
     let nTiles = (toTiles . output) nState in
-    let nIO = case nTiles of
-                [tile] -> io >>= (\_ -> printTile tile)
-                _ -> io
+    let nIO = io >>= (\_ -> printPoint "Ball" 3 balls
+                 >>= (\_ -> printPoint "Ball direction" 6 (let m = memory state in [(fromInteger (m M.! 390), fromInteger (m M.! 391))])
+                 >>= (\_ -> printPoint "Paddle" 9 paddle
+                 >>= (\_ -> case nTiles of
+                                [tile] -> printTile tile
+                                _ -> return ()))))
     in case nTiles of
         [] -> (nState, balls, paddle, score, True, nIO)
         [Ball newBall] -> let nBalls = newBall:balls in (nState, nBalls, paddle, score, nFinished, nIO)
@@ -73,16 +104,6 @@ processNextTile (state, balls, paddle, score, finished, io) =
 
 --findTile isTile state = head (filter isTile (tail (iterate nextTile state )))
 
-printTile:: Tile -> IO ()
-printTile t = case t of 
-                Empty p  -> oneTile p " " 10000
-                Wall p   -> oneTile p "#" 0
-                Block p  -> oneTile p "+" 0
-                Paddle p -> oneTile p "=" 1000000
-                Ball p   -> oneTile p "*" 1000000
-                _ -> putStr ""
-              where
-                oneTile p c d = (setCursorPosition (snd p) (fst p)) >>= (\_ -> putStr c) >>= (\_ -> threadDelay d)
 
 run2 :: IO ()
 run2 = readFile "src/day13_input.txt" >>= 
