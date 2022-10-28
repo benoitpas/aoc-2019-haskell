@@ -130,4 +130,10 @@ Actually as it wasn't that easy to write a logic that plays without fully unders
 
 Implementing the display for the game helped me better understand how the [IO monad](https://www.haskell.org/tutorial/io.html) works as well as what the ['do'](https://en.wikibooks.org/wiki/Haskell/do_notation) syntactic sugar does. For part 2 I have added a new entry point to the program (`run2`) that doesn't use the 'do' notation to have more flexibility to pass the IO monad around.
 
-The program still loses. Thinking about it it may be easier to patch the program so that the ball always bounces, independently of the where the paddle is.
+The program still loses. Thinking about it it may be easier to patch the program so that the ball always bounces, independently of the where the paddle is. When I did try simple patches, the program doesn't start (or at least for the time I waited nothing happened). I didn't check the code in details, but there may be some checksums on the integrity of the code.
+
+So I didn't patch it in the end but I found the memory location where the future direction of the ball is stored. Using that information it was easy to guide the paddle to right direction.
+
+This puzzle turned out to take a fair amount of time and multiple experiments. It helped me understand the IO monad a lot better as well as how the 'do {}' syntactical sugar is translated.
+
+

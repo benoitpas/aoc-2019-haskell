@@ -12,12 +12,12 @@ spec = do
 
     describe "paddleDirection" $ do
         it "makes it go right by default" $ do
-            paddleDirection [] [] `shouldBe` 1
-        it "not really follow the ball" $ do
-            paddleDirection [(10,5)] [(20,19)] `shouldBe` 1
-        it "follows the ball" $ do
-            paddleDirection [(22,5)] [(20,19)] `shouldBe` 1
+            paddleDirection [] (1,1) [] `shouldBe` 1
         it "follow the ball" $ do
-            paddleDirection [(10,5),(11,4)] [(20,19)] `shouldBe` -1
+            paddleDirection [(10,5)] (1,1) [(20,19)] `shouldBe` -1
         it "follows the ball" $ do
-            paddleDirection [(22,5),(21,7)] [(20,19)] `shouldBe` 1
+            paddleDirection [(22,5)] (1,1) [(20,19)] `shouldBe` 1
+        it "follow the ball" $ do
+            paddleDirection [(10,5),(11,4)] (-1,1) [(20,19)] `shouldBe` -1
+        it "follow the ball" $ do
+            paddleDirection [(22,5),(21,7)] (1,1) [(20,19)] `shouldBe` 1
