@@ -136,4 +136,10 @@ So I didn't patch it in the end but I found the memory location where the future
 
 This puzzle turned out to take a fair amount of time and multiple experiments. It helped me understand the IO monad a lot better as well as how the 'do {}' syntactical sugar is translated.
 
+# Day 14
 
+Part 1 seems quite straightfoward: build the graph and then compute the number of needed ORE on it. I hesitated between using a recursive algebraic data type or a 'Map' to store the graph.
+
+It is a bit more complex to build the graph but it makes it easier to implement recursive algorithm while the map is easier to build but implementating various algorithms on it will be a bit more complicated.
+
+For now as only one algorihm is required, I'm going to use the map. Also to store the counts I'm going to try to parametrize the types with 'Integral' be able to switch between 'Int' and 'Integer'.
