@@ -142,4 +142,6 @@ Part 1 seems quite straightfoward: build the graph and then compute the number o
 
 It is a bit more complex to build the graph but it makes it easier to implement recursive algorithm while the map is easier to build but implementating various algorithms on it will be a bit more complicated.
 
-For now as only one algorihm is required, I'm going to use the map. Also to store the counts I'm going to try to parametrize the types with 'Integral' be able to switch between 'Int' and 'Integer'.
+For now as only one algorihm is required, I'm going to use the map. Also to store the counts I'm going to try to parametrize the types with 'Integral' be able to switch between 'Int' and 'Integer'. The only thing that wasn't immedialely obvious in the implementation was to use a map to keep track of 'unused' chemicals and update it after each reaction.
+
+I don't know if it is psychological but I feed writing in haskell helps get the algorithm right with less iterations. After writing it for the first small example that returns '31', I tried it for the full puzzle and got the right answer straight away.
