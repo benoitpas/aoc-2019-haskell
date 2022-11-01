@@ -34,11 +34,11 @@ spec = do
             parseLine "7 A, 1 E => 1 FUEL" `shouldBe` Just (("FUEL",1),[("E",1),("A",7)])
     describe "getGraph" $ do
         it "extracts one line of a graph" $ do
-            M.toList (getGraph ["10 ORE => 10 A"]) `shouldBe` [("A",(10,[("ORE",10)]))]
+            getGraph ["10 ORE => 10 A"] `shouldBe` M.fromList [("A",(10,[("ORE",10)]))]
         it "extracts a more complicated line of a graph" $ do
-            M.toList (getGraph ["7 A, 1 D => 1 E"]) `shouldBe` [("E",(1,[("D",1),("A",7)]))]
+            getGraph ["7 A, 1 D => 1 E"] `shouldBe` M.fromList [("E",(1,[("D",1),("A",7)]))]
         it "extracts a full graph" $ do
-            M.toList (getGraph ex1) `shouldBe` [("A",(10,[("ORE",10)])),
+            getGraph ex1 `shouldBe` M.fromList [("A",(10,[("ORE",10)])),
                 ("B",(1,[("ORE",1)])),
                 ("C",(1,[("B",1),("A",7)])),
                 ("D",(1,[("C",1),("A",7)])),
@@ -46,8 +46,11 @@ spec = do
                 ("FUEL",(1,[("E",1),("A",7)]))]
 
         it "computes the number of ORE for example 1" $ do
-            calculateOre (getGraph ex1) `shouldBe` 31
+            calculateOre (getGraph ex1) 1 `shouldBe` 31
 
         it "computes the number of ORE for example 2" $ do
-            calculateOre (getGraph ex2) `shouldBe` 13312
+            calculateOre (getGraph ex2) 1 `shouldBe` 13312
+
+        it "computes how much fuel for 1000000000000 ore for example 2" $ do
+            findFuel (getGraph ex2) `shouldBe` 82892753
 

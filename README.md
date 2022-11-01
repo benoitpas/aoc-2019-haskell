@@ -145,3 +145,5 @@ It is a bit more complex to build the graph but it makes it easier to implement 
 For now as only one algorihm is required, I'm going to use the map. Also to store the counts I'm going to try to parametrize the types with 'Integral' be able to switch between 'Int' and 'Integer'. The only thing that wasn't immedialely obvious in the implementation was to use a map to keep track of 'unused' chemicals and update it after each reaction.
 
 I don't know if it is psychological but I feed writing in haskell helps get the algorithm right with less iterations. After writing it for the first small example that returns '31', I tried it for the full puzzle and got the right answer straight away.
+
+For part 2, I didn't try to implement a reverse of the computation of part 1 (it is probably very hard because of the dependencies between compounds) but instead used an iterative method with part 1.
