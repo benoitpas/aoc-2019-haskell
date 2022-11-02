@@ -1,5 +1,6 @@
 module Day13
     (
+        nextOutput,
         Tile(..), toTiles, paddleDirection,
         run, run2
     ) where
@@ -27,8 +28,12 @@ isBlock :: Tile -> Bool
 isBlock (Block _) = True
 isBlock _ = False
 
+nextOutput :: Int -> State -> (State, Integer)
+nextOutput nOutput state = last $ takeWhile (\(s,c) -> length (output s) <= nOutput && c /= 99) (iterate (\(s, _) -> nextStep s) (state {output = []}, 0))
+--nextOutput nOutput state = until (\(s,c) -> length (output s) == nOutput || c == 99) (\(s, _) -> nextStep s) (state {output = []}, 0)
+
 nextTile :: State -> (State, Integer)
-nextTile state = last $ takeWhile (\(s,c) -> length (output s) <= 3 && c /= 99) (iterate (\(s, _) -> nextStep s) (state {output = []}, 0))
+nextTile = nextOutput 3
 
 paddleDirection :: [Point] -> Point -> [Point] -> Integer
 paddleDirection balls ballDirection paddle =

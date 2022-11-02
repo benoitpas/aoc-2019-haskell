@@ -59,19 +59,19 @@ nextStep state =
     in (newState, cmd)
                
 allSteps :: State -> State
-allSteps iState = last $ takeWhile (\state -> ip state >= 0) (iterate (fst . nextStep) iState)
+allSteps iState = until (\state -> ip state < 0) (fst . nextStep) iState
 
-runProgram :: String -> Integer -> [Integer]
+runProgram :: String -> Integer -> Integer
 runProgram program i =
     let iState = stateFromProgram program i in
     let lastState = allSteps iState
-    in output lastState
+    in last $ output lastState
 
 run :: IO ()
 run = do
     content <- readFile "src/day5_input.txt"
     let program = (head (lines content))
-    let p1 = runProgram program 12
+    let p1 = runProgram program 1
     print ("puzzle 1: " ++ show p1)
     let p2 = runProgram program 5
     print ("puzzle 2: " ++ show p2)
