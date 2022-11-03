@@ -147,3 +147,7 @@ For now as only one algorihm is required, I'm going to use the map. Also to stor
 I don't know if it is psychological but I feed writing in haskell helps get the algorithm right with less iterations. After writing it for the first small example that returns '31', I tried it for the full puzzle and got the right answer straight away.
 
 For part 2, I didn't try to implement a reverse of the computation of part 1 (it is probably very hard because of the dependencies between compounds) but instead used an iterative method with part 1.
+
+# Day 15
+
+Another puzzle with the intcode interpreter. Initially I tried to randomly move the droid around to see what the area looks like (this is the run2 entry point). The area is actually a puzzle so the shortest path is the path to the oxygen equipment without going back. As the paths is also only 1 block wide, I simply implemented a backtracking logic that never goes back to its previous point. I do not keep track of the previously explored areas, only how many times the droid has moved.
