@@ -4,7 +4,7 @@ module Day15
     ) where
 
 import Day3 (Point)
-import Day5 (stateFromProgram, allSteps, nextStep, State(..))
+import Day5 (stateFromProgram, nextStep, State(..))
 
 import qualified Data.List as L
 import qualified Data.Map as M
@@ -43,34 +43,38 @@ plot area =
         foldr (\((x,y),c) -> \io -> io >>= (\_ -> do {setCursorPosition (y-ymin) (x-xmin) ; putStr [c]})) clearScreen lmap
         setCursorPosition (ymax - ymin + 1) 0
 
-findPathCount :: State -> Integer -> Integer
-findPathCount state prevDirection =
+findPathCount :: State -> Integer -> Point -> (Integer, Point)
+findPathCount state prevDirection prevLocation =
     let directions = case prevDirection of
                         1 -> [1,3,4]
                         2 -> [2,3,4]
                         3 -> [1,2,3]
                         4 -> [1,2,4]
                         _ -> [1..4]
-    in foldr (\i -> \a ->   if a < 0 then
-                                let (nState, _) = nextOutput 1 state  {input = i}
-                                in case output nState of
-                                    [0] -> -1
-                                    [1] -> let n = findPathCount nState i in (if n > 0 then 1+n else (-1))
-                                    [2] -> 1
-                            else
-                                a) (-1) directions
+    in foldr (\i -> \(a,p) ->   
+        if a < 0 then
+            let (nState, _) = nextOutput 1 state {input = i} in
+            let np = move p i
+            in case output nState of
+                [0] -> (-1, p)
+                [1] -> let (n,p2) = findPathCount nState i np in (if n > 0 then (1 + n,p2) else (-1, np))
+                [2] -> (1, np)
+        else
+                (a, p)) (-1, prevLocation) directions
 
 run2 :: IO ()
 run2 = do
     content <- readFile "src/day15_input.txt"
     let iState = stateFromProgram (head (lines content)) 4
     print "The wait can be a couple of minutes"
-    let (_, _, area, _, _) = until (\(_,_,_,_,f)-> f) next (iState, (0,0), M.fromList [((0,0),' ')], R.mkStdGen 31415, False)
+    let (_, lastLocation, area, _, _) = until (\(_,_,_,_,f)-> f) next (iState, (0,0), M.fromList [((0,0),' ')], R.mkStdGen 31415, False)
     let areaWithDroid = M.insert (0,0) 'D' area
     plot areaWithDroid
+    print (show lastLocation)
 
 run :: IO ()
 run = do
     content <- readFile "src/day15_input.txt"
     let iState = stateFromProgram (head (lines content)) 4
-    print ("puzzle 1: " ++ show (findPathCount iState 0))
+    let (p1, oxygenLocation) = findPathCount iState 0 (0,0)
+    print ("puzzle 1: " ++ show p1)
