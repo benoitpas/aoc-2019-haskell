@@ -154,4 +154,6 @@ Another puzzle with the intcode interpreter. Initially I tried to randomly move 
 
 The area is actually a puzzle so the shortest path is the path to the oxygen equipment without going back. As the paths is also only 1 block wide, I simply implemented a backtracking logic that never goes back to its previous point. I do not keep track of the previously explored areas, only how many times the droid has moved.
 
-After unlocking day 1, I realised I need the location of the oxygen equipment so I added it to the function.
+After unlocking day 1, I realised I need the location of the oxygen equipment so I added it to the function. As there are 'loops' in the area, i.e.  gas can meet gas, the algorihm tracks where the gas has already been. Also, to mimic the gas propagation I used a breadth first exploration.
+
+I didn't add any unit tests as I would have needed to 'mock' droid.

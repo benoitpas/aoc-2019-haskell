@@ -8,11 +8,12 @@ import Day5 (stateFromProgram, nextStep, State(..))
 
 import qualified Data.List as L
 import qualified Data.Map as M
+import qualified Data.Set as S
 import qualified System.Random as R
 
 import System.Console.ANSI
 
-move :: (Eq a1, Num a1, Num a2, Num a3) => (a3, a2) -> a1 -> (a3, a2)
+move :: Point -> Integer -> Point
 move (x,y) direction = 
     case direction of
         1 -> (x, y - 1)
@@ -43,24 +44,25 @@ plot area =
         foldr (\((x,y),c) -> \io -> io >>= (\_ -> do {setCursorPosition (y-ymin) (x-xmin) ; putStr [c]})) clearScreen lmap
         setCursorPosition (ymax - ymin + 1) 0
 
-findPathCount :: State -> Integer -> Point -> (Integer, Point)
+findPathCount :: State -> Integer -> Point -> (Integer, Point, State)
 findPathCount state prevDirection prevLocation =
-    let directions = case prevDirection of
-                        1 -> [1,3,4]
-                        2 -> [2,3,4]
-                        3 -> [1,2,3]
-                        4 -> [1,2,4]
-                        _ -> [1..4]
-    in foldr (\i -> \(a,p) ->   
+    let directions  = 
+            case prevDirection of
+                1 -> [1,3,4]
+                2 -> [2,3,4]
+                3 -> [1,2,3]
+                4 -> [1,2,4]
+                _ -> [1..4]
+    in foldr (\i -> \(a,p,s) ->
         if a < 0 then
             let (nState, _) = nextOutput 1 state {input = i} in
             let np = move p i
             in case output nState of
-                [0] -> (-1, p)
-                [1] -> let (n,p2) = findPathCount nState i np in (if n > 0 then (1 + n,p2) else (-1, np))
-                [2] -> (1, np)
+                [0] -> (-1, p, state)
+                [1] -> let (n, p2, s2) = findPathCount nState i np in (if n > 0 then (1 + n, p2, s2) else (-1, np, nState))
+                [2] -> (1, np, nState)
         else
-                (a, p)) (-1, prevLocation) directions
+                (a, p, s)) (-1, prevLocation, state) directions
 
 run2 :: IO ()
 run2 = do
@@ -72,9 +74,23 @@ run2 = do
     plot areaWithDroid
     print (show lastLocation)
 
+findMaxCount :: (Integer, [(State,Point)], S.Set Point) -> (Integer, [(State,Point)], S.Set Point)
+findMaxCount (distance, states, prevLocations) =
+    let nStates = states >>= (\(s,p) ->
+            let directions = filter (\d -> S.notMember (move p d) prevLocations) [1..4]
+            in directions >>= (\d -> let (nState,_) = nextOutput 1 s {input = d} in
+                                     let np = move p d
+                                     in case output nState of
+                                            [0] -> []
+                                            [1] -> [(nState, np)]) ) in
+    let nLocations = S.fromList $ map (\(_,p) -> p) nStates
+    in (distance + 1, nStates,  prevLocations `S.union` nLocations)
+
 run :: IO ()
 run = do
     content <- readFile "src/day15_input.txt"
     let iState = stateFromProgram (head (lines content)) 4
-    let (p1, oxygenLocation) = findPathCount iState 0 (0,0)
+    let (p1, oxygenLocation, oState) = findPathCount iState 0 (0,0)
     print ("puzzle 1: " ++ show p1)
+    let (d, _, _) = until (\(_,s,_) -> length s == 0) findMaxCount (-1, [(oState, oxygenLocation)], S.fromList [oxygenLocation])
+    print ("puzzle 2: " ++ show d)
