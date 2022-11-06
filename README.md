@@ -157,3 +157,8 @@ The area is actually a puzzle so the shortest path is the path to the oxygen equ
 After unlocking day 1, I realised I need the location of the oxygen equipment so I added it to the function. As there are 'loops' in the area, i.e.  gas can meet gas, the algorihm tracks where the gas has already been. Also, to mimic the gas propagation I used a breadth first exploration.
 
 I didn't add any unit tests as I would have needed to 'mock' droid.
+
+# Day 16
+
+For Part 1 a simple brute force approach does it. Is really straightforward, especially as it is easy to use unit tests to verify the functions.
+Reading Part 2 description, the brute force approach may not work !
