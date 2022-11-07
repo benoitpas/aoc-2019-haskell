@@ -150,7 +150,7 @@ For part 2, I didn't try to implement a reverse of the computation of part 1 (it
 
 # Day 15
 
-Another puzzle with the intcode interpreter. Initially I tried to randomly move the droid around to see what the area looks like (this is the run2 entry point). 
+Another puzzle with the IntCode interpreter. Initially I tried to randomly move the droid around to see what the area looks like (this is the run2 entry point). 
 
 The area is actually a puzzle so the shortest path is the path to the oxygen equipment without going back. As the paths is also only 1 block wide, I simply implemented a backtracking logic that never goes back to its previous point. I do not keep track of the previously explored areas, only how many times the droid has moved.
 
@@ -162,3 +162,6 @@ I didn't add any unit tests as I would have needed to 'mock' droid.
 
 For Part 1 a simple brute force approach does it. Is really straightforward, especially as it is easy to use unit tests to verify the functions.
 Reading Part 2 description, the brute force approach may not work !
+
+Part 2 requires to look at what the transformation does (and read properly the instructions, more than usual). Here we can see that type of calculations is not the forte of Haskell, it would be faster with Scala or Python (not mentioning C++).
+
