@@ -165,3 +165,8 @@ Reading Part 2 description, the brute force approach may not work !
 
 Part 2 requires to look at what the transformation does (and read properly the instructions, more than usual). Here we can see that type of calculations is not the forte of Haskell, it would be faster with Scala or Python (not mentioning C++).
 
+# Day 17
+
+In this puzzle, the IntCode interpreter provides the input of the puzzle. That allows to write some unit tests. Initially I thought I would able to reuse the 'plot' function I implemented in Day15 to see what the scaffoldings look like. It worked but turned out to only display the part of the scaffolding that fits on the screen !
+
+In part 2, we need to write instructions for the vaccum robot to explore all of the scaffolding. I'll first try to generate them by hand and automate the process if that proves too hard.
