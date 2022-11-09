@@ -7,6 +7,7 @@ import Day17
 
 import Data.Char
 
+grid :: [String]
 grid = 
    ["..#..........",
     "..#..........",
@@ -17,6 +18,8 @@ grid =
     "..#####...^.."]
 
 mapedGrid = grid >>= (\s -> map (toInteger . ord) s ++ [10])
+
+mapedGrid :: [Integer]
 
 spec :: Spec
 spec = do
