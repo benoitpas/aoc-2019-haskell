@@ -1,6 +1,6 @@
 module Day17
     (
-        sumAligments, toMap,
+        sumAligments, toMap, toInts,
         run
     ) where
 
@@ -23,13 +23,16 @@ toMap l = fst $ foldl (\(m,(x,y)) c -> case c of
                                         _ -> (M.insert (x,y) (chr (fromIntegral c)) m, (x+1,y))) 
                       (M.empty, (0,0)) l
 
+toInts :: [String] -> [Integer]
+toInts ints = ints >>= (\l -> map (toInteger . ord) l ++ [10])
+
 program2 :: [Integer]
-program2 = [
+program2 = toInts [
     "A,B,A,A,B,C,B,C,C,B",
     "L,12,R,8,L,6,R,8,L,6",
     "R,8,L,12,L,12,R,8",
     "L,6,R,6,L,12",
-    "n"] >>= (\l -> map (toInteger . ord) l ++ [10])
+    "n"]
 
 runUntilCmd :: Integer -> State -> (State, Integer)
 runUntilCmd cmd state = until (\(_,c) -> c == cmd) (\(s,_) -> nextStep s) (state, 0)

@@ -172,3 +172,11 @@ In this puzzle, the IntCode interpreter provides the input of the puzzle. That a
 In part 2, we need to write instructions for the vaccum robot to explore all of the scaffolding. I'll first try to generate them by hand and automate the process if that proves too hard.
 
 After generating the instructions by hand in a spreadhsheet (it makes is easier to track all segments), finding the 3 functions is quite straightforward as there should be one at the beginning and one at the end, so only the middle one to guess. After it is just a matter of properly encoding the input string, feeding it to the Intcode interpreter and then reading the results.
+
+# Day 18
+
+So we have here another puzzle with a maze. Maybe I should try to solve some of this puzzles using logic programming, either with [prolog](https://en.wikipedia.org/wiki/Prolog) or a logic programming framework like [minikanren](http://minikanren.org/). Actually there seems to be a cottage industry of [implementing minikanren in all languages under the sun](http://minikanren.org/#implementations) ;-).
+
+But for now, I'll implement the solution using the Haskell standard library.
+
+This first choice to make is how to store the maze. I could use an array or a map. In a language that supports array mutability, the array is probably the most efficient data structure, both in term of memory usage and speed. In Haskell, the choice is not that straightforward. I choose to use a 'Map' as it is probably as efficient as an immutable array and it has a richer interface.
