@@ -33,9 +33,9 @@ spec = do
 
     describe "findKeys" $ do
         it "finds the available keys at a given location" $ do
-            findKeys ex1Map (5,1) S.empty (0,0) `shouldBe` ['a']
+            findKeys ex1Map (5,1) S.empty (0,0) 0 `shouldBe` [('a',2)]
         it "finds the available keys at a given location with an empty bag" $ do
-            findKeys ex1Map (6,1) S.empty (0,0) `shouldBe`  ['a']
+            findKeys ex1Map (6,1) S.empty (0,0) 0 `shouldBe`  [('a',1)]
         it "finds the available keys at a given location with a key in the bag" $ do
-            findKeys ex1Map (6,1) (S.fromList ['a']) (0,0) `shouldBe` ['b']
+            findKeys ex1Map (6,1) (S.fromList ['a']) (0,0) 0 `shouldBe` [('b',5)]
 

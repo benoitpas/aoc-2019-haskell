@@ -24,15 +24,15 @@ possibleDirections area (sx,sy) bag (dx,dy) =
     let directions = L.delete (-dx,-dy) [(0,1), (1,0), (0,-1),(-1,0)]  in
     directions  >>= (\(pdx, pdy) ->  if isFree area bag (sx+pdx,sy+pdy) then [(pdx,pdy)] else [])
 
--- Need to add distance to keys
-findKeys area (sx,sy) bag (dx,dy) =
-    let pd = possibleDirections area (sx,sy) bag (dx,dy) 
+findKeys area (sx,sy) bag (dx,dy) iDistance =
+    let pd = possibleDirections area (sx,sy) bag (dx,dy) in
+    let nDistance = iDistance + 1
     in pd >>= (\(pdx, pdy) -> 
         let (nsx,nsy) = (sx+pdx, sy+pdy) in
         let c = checkLocation (nsx,nsy) area
         in case (isLower c, c `S.member` bag) of
-                    (True, False) -> [c]
-                    _ -> findKeys area (nsx,nsy) bag (pdx,pdy))
+                    (True, False) -> [(c,nDistance)]
+                    _ -> findKeys area (nsx,nsy) bag (pdx,pdy) nDistance)
 
 shortestPath l = 
     let m = toMap (toInts l) in
