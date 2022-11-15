@@ -37,9 +37,10 @@ findKeys area (sx,sy) bag (dx,dy) iDistance =
 shortestPath l = 
     let m = toMap (toInts l) in
     let start = fst $ head $ M.toList (M.filterWithKey (\_ c -> c == '@') m)
-    in start
+    in findKeys m start S.empty (0,0) 0
 
 run :: IO ()
 run = do
     content <- readFile "src/day18_input.txt"
-    print (show (lines content))
+    putStrLn content
+    print (show (shortestPath (lines (content))))
