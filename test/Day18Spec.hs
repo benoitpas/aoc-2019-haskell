@@ -25,17 +25,20 @@ spec = do
 
     describe "possibleDirections" $ do
         it "finds the possible directions at a given location" $ do
-            possibleDirections ex1Map (5,1) S.empty (0,0) `shouldBe` [(1,0),(-1,0)]
+            possibleDirections ex1Map (5,1) S.empty (S.fromList [(5,1)]) `shouldBe` [(1,0),(-1,0)]
         it "finds the possible directions at a given location with an empty bag" $ do
-            possibleDirections ex1Map (6,1) S.empty (0,0) `shouldBe`  [(1,0),(-1,0)]
+            possibleDirections ex1Map (6,1) S.empty (S.fromList [(6,1)]) `shouldBe`  [(1,0),(-1,0)]
         it "finds the possible directions at a given location with a key in the bag" $ do
-            possibleDirections ex1Map (6,1) (S.fromList ['a']) (0,0) `shouldBe` [(1,0),(-1,0)]
+            possibleDirections ex1Map (6,1) (S.fromList ['a']) (S.fromList [(6,1)]) `shouldBe` [(1,0),(-1,0)]
 
     describe "findKeys" $ do
         it "finds the available keys at a given location" $ do
-            findKeys ex1Map (5,1) S.empty (0,0) 0 `shouldBe` [('a',2)]
+            findKeys ex1Map (5,1) S.empty (S.fromList [(5,1)]) 0 `shouldBe` [('a',2,(7,1))]
         it "finds the available keys at a given location with an empty bag" $ do
-            findKeys ex1Map (6,1) S.empty (0,0) 0 `shouldBe`  [('a',1)]
+            findKeys ex1Map (6,1) S.empty (S.fromList [(6,1)]) 0 `shouldBe`  [('a',1, (7,1))]
         it "finds the available keys at a given location with a key in the bag" $ do
-            findKeys ex1Map (6,1) (S.fromList ['a']) (0,0) 0 `shouldBe` [('b',5)]
+            findKeys ex1Map (6,1) (S.fromList ['a']) (S.fromList [(6,1)]) 0 `shouldBe` [('b',5, (1,1))]
 
+    describe "shortestPath" $ do
+        it "finds the shortestPath from the start to collect all keys" $ do
+            shortestPath ex1 `shouldBe` [[('a',(2,(7,1))),('b',(8,(1,1)))]]
