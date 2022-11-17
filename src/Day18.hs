@@ -18,7 +18,7 @@ checkLocation = M.findWithDefault '#'
 
 isFree area bag (x,y) = 
     let c = checkLocation (x,y) area 
-    in c == '.' || c == '@' || isLower c || (toLower c) `S.member` bag
+    in c == '.' || c == '@' || isLower c || (toLower c) `L.elem` bag
 
 possibleDirections area (sx,sy) bag prevLocations =
     let directions = [(0,1), (1,0), (0,-1),(-1,0)]  in
@@ -31,7 +31,7 @@ findKeys area (sx,sy) bag prevLocations iDistance =
     in pd >>= (\(pdx, pdy) -> 
         let (nsx,nsy) = (sx+pdx, sy+pdy) in
         let c = checkLocation (nsx,nsy) area
-        in case (isLower c, c `S.member` bag) of
+        in case (isLower c, c `L.elem` bag) of
                     (True, False) -> [(c, nDistance, (nsx,nsy))]
                     _ -> findKeys area (nsx,nsy) bag (S.insert (nsx,nsy) prevLocations) nDistance)
 
@@ -42,7 +42,7 @@ findKeys2 area (sx,sy) bag iDistance =
                                                     _ -> d in M.insert c (nd,p) a) M.empty r
 
 nextKey m status = 
-    let r = status >>= (\(keys,(d,p)) -> let keys2 = findKeys2 m p keys d in map (\(c,(d,p)) -> (S.insert c keys, (d,p) )) keys2)
+    let r = status >>= (\(keys,(d,p)) -> let keys2 = findKeys2 m p keys d in map (\(c,(d,p)) -> (keys ++ [c], (d,p) )) keys2)
     in r
 --    in take 1000 $ L.sortOn (\(keys,(d,p)) -> d) r
 --    in M.toList $ foldr (\(keys,(d,p)) a -> case (M.lookup keys a) of 
@@ -53,7 +53,7 @@ shortestPath l =
     let m = toMap (toInts l) in
     let start = fst $ head $ M.toList (M.filterWithKey (\_ c -> c == '@') m) in
     let nbKeys = length $ filter isLower (M.elems m) in
-    let lstates = last $ take (nbKeys + 1) (iterate (nextKey m) [(S.empty, (0,start))]) in
+    let lstates = last $ take (nbKeys + 1) (iterate (nextKey m) [([], (0,start))]) in
     let (_,(d,_)) = head $ L.sortOn (\(_,(d,_)) -> d) lstates
     in d
  --   in  [minimum $ map (\(_,(d,_)) -> d) s]
