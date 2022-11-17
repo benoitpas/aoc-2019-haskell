@@ -41,11 +41,26 @@ findKeys2 area (sx,sy) bag iDistance =
                                                     Just (ad,ap) -> min d ad
                                                     _ -> d in M.insert c (nd,p) a) M.empty r
 
-shortestPath l = 
+nextKey m status = 
+    let r = status >>= (\(keys,(d,p)) -> let keys2 = findKeys2 m p keys d in map (\(c,(d,p)) -> (S.insert c keys, (d,p) )) keys2)
+    in r
+--    in take 1000 $ L.sortOn (\(keys,(d,p)) -> d) r
+--    in M.toList $ foldr (\(keys,(d,p)) a -> case (M.lookup keys a) of 
+--                                                Just (ad,ap) -> if d < ad then M.insert keys (d,p) a else a
+--                                                _ -> M.insert keys (d,p) a ) M.empty r
+
+shortestPath l =
     let m = toMap (toInts l) in
-    let start = fst $ head $ M.toList (M.filterWithKey (\_ c -> c == '@') m) in 
-    let keys1 = findKeys2 m start S.empty 0
-    in map (\(c,(d,p)) -> (c,(d,p)):findKeys2 m p (S.fromList [c]) d) keys1
+    let start = fst $ head $ M.toList (M.filterWithKey (\_ c -> c == '@') m) in
+    let nbKeys = length $ filter isLower (M.elems m) in
+    let lstates = last $ take (nbKeys + 1) (iterate (nextKey m) [(S.empty, (0,start))]) in
+    let (_,(d,_)) = head $ L.sortOn (\(_,(d,_)) -> d) lstates
+    in d
+ --   in  [minimum $ map (\(_,(d,_)) -> d) s]
+--    let keys1 = findKeys2 m start S.empty 0 in
+--    let s1 = map (\(c,(d,p)) -> (S.fromList [c],(d,p))) keys1 in
+--    let s2 = s1 >>= (\(keys,(d,p)) -> let keys2 = findKeys2 m p keys d in map (\(c,(d,p)) -> (S.insert c keys, (d,p) )) keys2)
+--    in s2 >>= (\(keys,(d,p)) -> let keys2 = findKeys2 m p keys d in map (\(c,(d,p)) -> (S.insert c keys, (d,p) )) keys2)
 
 run :: IO ()
 run = do

@@ -16,7 +16,37 @@ ex1 =
 
 ex1Map :: M.Map Point Char
 ex1Map = (toMap . toInts) ex1
+
+ex2 =
+   ["########################",
+    "#f.D.E.e.C.b.A.@.a.B.c.#",
+    "######################.#",
+    "#d.....................#",
+    "########################"]
  
+ex3 = ["########################",
+       "#...............b.C.D.f#",
+       "#.######################",
+       "#.....@.a.B.c.d.A.e.F.g#",
+       "########################"]
+
+ex4 = ["#################",
+       "#i.G..c...e..H.p#",
+       "########.########",
+       "#j.A..b...f..D.o#",
+       "########@########",
+       "#k.E..a...g..B.n#",
+       "########.########",
+       "#l.F..d...h..C.m#",
+       "#################"]
+
+ex5 = ["########################",
+       "#@..............ac.GI.b#",
+       "###d#e#f################",
+       "###A#B#C################",
+       "###g#h#i################",
+       "########################"]
+
 spec :: Spec
 spec = do
     describe "toMap" $ do
@@ -40,5 +70,13 @@ spec = do
             findKeys ex1Map (6,1) (S.fromList ['a']) (S.fromList [(6,1)]) 0 `shouldBe` [('b',5, (1,1))]
 
     describe "shortestPath" $ do
-        it "finds the shortestPath from the start to collect all keys" $ do
-            shortestPath ex1 `shouldBe` [[('a',(2,(7,1))),('b',(8,(1,1)))]]
+        it "finds the shortestPath from the start to collect all keys for example 1" $ do
+            shortestPath ex1 `shouldBe` 8
+        it "finds the shortestPath from the start to collect all keys for example 2" $ do
+            shortestPath ex2 `shouldBe` 86
+        it "finds the shortestPath from the start to collect all keys for example 3" $ do
+            shortestPath ex3 `shouldBe` 132
+--        it "finds the shortestPath from the start to collect all keys for example 4" $ do
+--            shortestPath ex4 `shouldBe` []
+        it "finds the shortestPath from the start to collect all keys for example 5" $ do
+            shortestPath ex5 `shouldBe` 81
