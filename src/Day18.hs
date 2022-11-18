@@ -2,6 +2,8 @@ module Day18
     (
         possibleDirections,
         findKeys,
+        buildTree,
+        strBuildTree,
         shortestPath,
         run
     ) where
@@ -37,12 +39,12 @@ findKeys area (sx,sy) bag prevLocations iDistance =
 
 findKeys2 area (sx,sy) bag iDistance =
     let r = findKeys area (sx,sy) bag (S.fromList[(sx,sy)]) iDistance
-    in M.toList $ foldr (\(c,d,p) a -> let nd = case (M.lookup c a) of
+    in foldr (\(c,d,p) a -> let nd = case (M.lookup c a) of
                                                     Just (ad,ap) -> min d ad
                                                     _ -> d in M.insert c (nd,p) a) M.empty r
 
 nextKey m status = 
-    let r = status >>= (\(keys,(d,p)) -> let keys2 = findKeys2 m p keys d in map (\(c,(d,p)) -> (keys ++ [c], (d,p) )) keys2)
+    let r = status >>= (\(keys,(d,p)) -> let keys2 = findKeys2 m p keys d in map (\(c,(d,p)) -> (keys ++ [c], (d,p) )) (M.toList keys2))
     in r
 --    in take 1000 $ L.sortOn (\(keys,(d,p)) -> d) r
 --    in M.toList $ foldr (\(keys,(d,p)) a -> case (M.lookup keys a) of 
@@ -62,8 +64,22 @@ shortestPath l =
 --    let s2 = s1 >>= (\(keys,(d,p)) -> let keys2 = findKeys2 m p keys d in map (\(c,(d,p)) -> (S.insert c keys, (d,p) )) keys2)
 --    in s2 >>= (\(keys,(d,p)) -> let keys2 = findKeys2 m p keys d in map (\(c,(d,p)) -> (S.insert c keys, (d,p) )) keys2)
 
+buildTree m (sx,sy) iBag iDistance iTree =
+    if M.member iBag iTree then
+        iTree
+    else
+        let keys = M.toList $ findKeys2 m (sx,sy) iBag iDistance in
+        let tree = M.insert iBag keys iTree
+        in foldr (\(c,(d,p)) a -> buildTree m p (iBag ++ [c]) d a) tree keys
+
+strBuildTree l =
+    let m = toMap (toInts l) in
+    let start = fst $ head $ M.toList (M.filterWithKey (\_ c -> c == '@') m) 
+    in buildTree m start "" 0 M.empty
+    
+
 run :: IO ()
 run = do
     content <- readFile "src/day18_input.txt"
     putStrLn content
-    print (show (shortestPath (lines (content))))
+    print (show (strBuildTree (lines (content))))
