@@ -82,15 +82,34 @@ strBuildTree l =
 
 shortestPath2 l =
     let m = toMap (toInts l) in
-    let start = fst $ head $ M.toList (M.filterWithKey (\_ c -> c == '@') m)
-    in nextNode m (S.fromList [], M.fromList [])
+    let start = fst $ head $ M.toList (M.filterWithKey (\_ c -> c == '@') m) in
+    let keys = findKeys2 m start [] 0 in
+    let todo = M.map (\(d,p) -> (d,p,[])) keys
+    in  take 10 (iterate (nextNode m) (todo, M.fromList []))
 
-nextNode :: M.Map (Int, Int) Char -> (S.Set (Int,Char,(Int, Int), [Char]), M.Map Char (Int, [Char])) -> (S.Set (Int,Char,(Int, Int), [Char]), M.Map Char (Int, [Char]))
+findNextNode :: M.Map Char (Int,(Int, Int), [Char]) -> (Int, Char, (Int,Int), [Char])
+findNextNode todo =
+    let l = L.sortOn (\(c,(d,p, prev)) -> d) (M.toList todo) in
+    let (c,(d,p, prev)) = head l
+    in (d,c,p, prev)
+
+nextNode :: M.Map (Int, Int) Char -> (M.Map Char (Int,(Int, Int), [Char]), M.Map Char (Int, [Char])) 
+    -> (M.Map Char (Int,(Int, Int), [Char]), M.Map Char (Int, [Char]))
 nextNode area (todo,done) =
-    let (nd,nc,np,nprev) = S.elemAt 0 todo in
-    let keys = findKeys2 area np (nc:nprev) nd in
-    let 
-    in (todo,done)
+    let (nd,nc,np,nprev) = findNextNode todo in
+    let keys = findKeys2 area np nprev nd in
+    let ndone = M.insert nc (nd, nprev) done in
+    let ntodo = M.delete nc todo in
+    let prev = (nc:nprev)
+    in  M.foldrWithKey (\c (d,p) (td,dn) ->
+        case (M.member c done, M.lookup c todo) of
+            (False, Nothing) -> (M.insert c (d,p, prev) td,dn)
+            (False, Just (tdd, tdp, tdprev)) -> (if d<tdd then M.insert c (d,p, prev) td else td,dn)
+            (_, _) -> (td,dn)) (ntodo, ndone) keys
+--    in  M.foldrWithKey (\c (d,p) (td,dn) -> if M.member c done then 
+--            (td,dn)
+--        else -- if in todo, replace entry if distance is less
+--            (td,dn)) (todo,done) keys
     
 
 
