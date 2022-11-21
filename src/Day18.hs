@@ -37,6 +37,7 @@ findKeys area (sx,sy) bag prevLocations iDistance =
                     (True, False) -> [(c, nDistance, (nsx,nsy))]
                     _ -> findKeys area (nsx,nsy) bag (S.insert (nsx,nsy) prevLocations) nDistance)
 
+findKeys2 :: M.Map (Int, Int) Char -> (Int, Int) -> [ Char] -> Int -> M.Map Char (Int, (Int, Int))
 findKeys2 area (sx,sy) bag iDistance =
     let r = findKeys area (sx,sy) bag (S.fromList[(sx,sy)]) iDistance
     in foldr (\(c,d,p) a -> let nd = case (M.lookup c a) of
@@ -58,6 +59,8 @@ shortestPath l =
     let lstates = last $ take (nbKeys + 1) (iterate (nextKey m) [([], (0,start))]) in
     let (_,(d,_)) = head $ L.sortOn (\(_,(d,_)) -> d) lstates
     in d
+--    in (iterate (nextKey m) [([], (0,start))])
+
  --   in  [minimum $ map (\(_,(d,_)) -> d) s]
 --    let keys1 = findKeys2 m start S.empty 0 in
 --    let s1 = map (\(c,(d,p)) -> (S.fromList [c],(d,p))) keys1 in
@@ -76,10 +79,23 @@ strBuildTree l =
     let m = toMap (toInts l) in
     let start = fst $ head $ M.toList (M.filterWithKey (\_ c -> c == '@') m) 
     in buildTree m start "" 0 M.empty
+
+shortestPath2 l =
+    let m = toMap (toInts l) in
+    let start = fst $ head $ M.toList (M.filterWithKey (\_ c -> c == '@') m)
+    in nextNode m (S.fromList [], M.fromList [])
+
+nextNode :: M.Map (Int, Int) Char -> (S.Set (Int,Char,(Int, Int), [Char]), M.Map Char (Int, [Char])) -> (S.Set (Int,Char,(Int, Int), [Char]), M.Map Char (Int, [Char]))
+nextNode area (todo,done) =
+    let (nd,nc,np,nprev) = S.elemAt 0 todo in
+    let keys = findKeys2 area np (nc:nprev) nd in
+    let 
+    in (todo,done)
     
+
 
 run :: IO ()
 run = do
     content <- readFile "src/day18_input.txt"
     putStrLn content
-    print (show (strBuildTree (lines (content))))
+    print (show (shortestPath2 (lines (content))))
