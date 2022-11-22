@@ -2,9 +2,9 @@ module Day18
     (
         possibleDirections,
         findKeys,
-        buildTree,
-        strBuildTree,
-        shortestPath,
+--        buildTree,
+--        strBuildTree,
+        shortestPath2,
         run
     ) where
 
@@ -37,29 +37,58 @@ findKeys area (sx,sy) bag prevLocations iDistance =
                     (True, False) -> [(c, nDistance, (nsx,nsy))]
                     _ -> findKeys area (nsx,nsy) bag (S.insert (nsx,nsy) prevLocations) nDistance)
 
-findKeys2 :: M.Map (Int, Int) Char -> (Int, Int) -> [ Char] -> Int -> M.Map Char (Int, (Int, Int))
+findKeys2 :: M.Map (Int, Int) Char -> (Int, Int) -> [ Char] -> Int -> M.Map [Char] (Int, (Int, Int))
 findKeys2 area (sx,sy) bag iDistance =
     let r = findKeys area (sx,sy) bag (S.fromList[(sx,sy)]) iDistance
-    in foldr (\(c,d,p) a -> let nd = case (M.lookup c a) of
+    in foldr (\(c,d,p) a -> let nd = case M.lookup (c:bag) a of
                                                     Just (ad,ap) -> min d ad
-                                                    _ -> d in M.insert c (nd,p) a) M.empty r
+                                                    _ -> d in M.insert (c:bag) (nd,p) a) M.empty r
 
-nextKey m status = 
-    let r = status >>= (\(keys,(d,p)) -> let keys2 = findKeys2 m p keys d in map (\(c,(d,p)) -> (keys ++ [c], (d,p) )) (M.toList keys2))
-    in r
+--nextKey m status = 
+--    let r = status >>= (\(keys,(d,p)) -> let keys2 = findKeys2 m p keys d in map (\(c,(d,p)) -> (keys ++ [c], (d,p) )) (M.toList keys2))
+--    in r
 --    in take 1000 $ L.sortOn (\(keys,(d,p)) -> d) r
 --    in M.toList $ foldr (\(keys,(d,p)) a -> case (M.lookup keys a) of 
 --                                                Just (ad,ap) -> if d < ad then M.insert keys (d,p) a else a
 --                                                _ -> M.insert keys (d,p) a ) M.empty r
 
-shortestPath l =
+--shortestPath l =
+--    let m = toMap (toInts l) in
+--    let start = fst $ head $ M.toList (M.filterWithKey (\_ c -> c == '@') m) in
+--    let nbKeys = length $ filter isLower (M.elems m) in
+--    let lstates = last $ take (nbKeys + 1) (iterate (nextKey m) [([], (0,start))]) in
+--    let (_,(d,_)) = head $ L.sortOn (\(_,(d,_)) -> d) lstates
+--    in d
+
+--buildTree m (sx,sy) iBag iDistance iTree =
+--    if M.member iBag iTree then
+--        iTree
+--    else
+--        let keys = M.toList $ findKeys2 m (sx,sy) iBag iDistance in
+--        let tree = M.insert iBag keys iTree
+--        in foldr (\(c,(d,p)) a -> buildTree m p (iBag ++ [c]) d a) tree keys
+
+--strBuildTree l =
+--    let m = toMap (toInts l) in
+--   let start = fst $ head $ M.toList (M.filterWithKey (\_ c -> c == '@') m)
+--    in buildTree m start "" 0 M.empty
+
+--shortestPath2 :: [String] -> [(M.Map [Char] (Int, (Int, Int)), M.Map [Char] Int)]
+shortestPath2 l =
     let m = toMap (toInts l) in
     let start = fst $ head $ M.toList (M.filterWithKey (\_ c -> c == '@') m) in
+    let keys = findKeys2 m start [] 0 in
+    let todo = M.map (\(d,p) -> (d,p)) keys in
+ --   in  last $ take 10 (iterate (nextNode m) (todo, M.fromList []))
+    let (_,done) = until (\(todo,done) -> (length (M.elems todo) == 0)) (nextNode m) (todo, M.fromList []) in
     let nbKeys = length $ filter isLower (M.elems m) in
-    let lstates = last $ take (nbKeys + 1) (iterate (nextKey m) [([], (0,start))]) in
-    let (_,(d,_)) = head $ L.sortOn (\(_,(d,_)) -> d) lstates
-    in d
---    in (iterate (nextKey m) [([], (0,start))])
+    let (_,r) = head $ L.sortOn  (\(k,d) -> d) (filter (\(k,d) -> length k == nbKeys) (M.toList done))
+    in r
+ --   in last $ take 50 (iterate (nextNode m) (todo, M.fromList []))
+
+findNextNode :: M.Map [Char] (Int,(Int, Int)) -> ([Char],Int, (Int,Int))
+findNextNode todo =
+    let l = L.sortOn (\(_,(d,_)) -> d) (M.toList todo) in--    in (iterate (nextKey m) [([], (0,start))])
 
  --   in  [minimum $ map (\(_,(d,_)) -> d) s]
 --    let keys1 = findKeys2 m start S.empty 0 in
@@ -67,44 +96,20 @@ shortestPath l =
 --    let s2 = s1 >>= (\(keys,(d,p)) -> let keys2 = findKeys2 m p keys d in map (\(c,(d,p)) -> (S.insert c keys, (d,p) )) keys2)
 --    in s2 >>= (\(keys,(d,p)) -> let keys2 = findKeys2 m p keys d in map (\(c,(d,p)) -> (S.insert c keys, (d,p) )) keys2)
 
-buildTree m (sx,sy) iBag iDistance iTree =
-    if M.member iBag iTree then
-        iTree
-    else
-        let keys = M.toList $ findKeys2 m (sx,sy) iBag iDistance in
-        let tree = M.insert iBag keys iTree
-        in foldr (\(c,(d,p)) a -> buildTree m p (iBag ++ [c]) d a) tree keys
+    let (k,(d,p)) = head l
+    in (k,d,p)
 
-strBuildTree l =
-    let m = toMap (toInts l) in
-    let start = fst $ head $ M.toList (M.filterWithKey (\_ c -> c == '@') m) 
-    in buildTree m start "" 0 M.empty
-
-shortestPath2 l =
-    let m = toMap (toInts l) in
-    let start = fst $ head $ M.toList (M.filterWithKey (\_ c -> c == '@') m) in
-    let keys = findKeys2 m start [] 0 in
-    let todo = M.map (\(d,p) -> (d,p,[])) keys
-    in  take 10 (iterate (nextNode m) (todo, M.fromList []))
-
-findNextNode :: M.Map Char (Int,(Int, Int), [Char]) -> (Int, Char, (Int,Int), [Char])
-findNextNode todo =
-    let l = L.sortOn (\(c,(d,p, prev)) -> d) (M.toList todo) in
-    let (c,(d,p, prev)) = head l
-    in (d,c,p, prev)
-
-nextNode :: M.Map (Int, Int) Char -> (M.Map Char (Int,(Int, Int), [Char]), M.Map Char (Int, [Char])) 
-    -> (M.Map Char (Int,(Int, Int), [Char]), M.Map Char (Int, [Char]))
+nextNode :: M.Map (Int, Int) Char -> (M.Map [Char] (Int,(Int, Int)), M.Map [Char] Int) 
+    -> (M.Map [Char] (Int,(Int, Int)), M.Map [Char] Int)
 nextNode area (todo,done) =
-    let (nd,nc,np,nprev) = findNextNode todo in
-    let keys = findKeys2 area np nprev nd in
-    let ndone = M.insert nc (nd, nprev) done in
-    let ntodo = M.delete nc todo in
-    let prev = (nc:nprev)
-    in  M.foldrWithKey (\c (d,p) (td,dn) ->
-        case (M.member c done, M.lookup c todo) of
-            (False, Nothing) -> (M.insert c (d,p, prev) td,dn)
-            (False, Just (tdd, tdp, tdprev)) -> (if d<tdd then M.insert c (d,p, prev) td else td,dn)
+    let (nkey,nd,np) = findNextNode todo in
+    let keys = findKeys2 area np nkey nd in
+    let ndone = M.insert nkey nd done in
+    let ntodo = M.delete nkey todo
+    in  M.foldrWithKey (\k (d,p) (td,dn) ->
+        case (M.member k done, M.lookup k todo) of
+            (False, Nothing) -> (M.insert k (d,p) td,dn)
+            (False, Just (tdd, tdp)) -> (if d<tdd then M.insert k (d,p) td else td,dn)
             (_, _) -> (td,dn)) (ntodo, ndone) keys
 --    in  M.foldrWithKey (\c (d,p) (td,dn) -> if M.member c done then 
 --            (td,dn)

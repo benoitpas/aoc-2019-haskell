@@ -69,14 +69,15 @@ spec = do
         it "finds the available keys at a given location with a key in the bag" $ do
             findKeys ex1Map (6,1) (S.fromList ['a']) (S.fromList [(6,1)]) 0 `shouldBe` [('b',5, (1,1))]
 
-    describe "shortestPath" $ do
+
+    describe "shortestPath2" $ do
         it "finds the shortestPath from the start to collect all keys for example 1" $ do
-            shortestPath ex1 `shouldBe` 8
+            shortestPath2 ex1 `shouldBe` 8
         it "finds the shortestPath from the start to collect all keys for example 2" $ do
-            shortestPath ex2 `shouldBe` 86
+            shortestPath2 ex2 `shouldBe` 86
         it "finds the shortestPath from the start to collect all keys for example 3" $ do
-            shortestPath ex3 `shouldBe` 132
+            shortestPath2 ex3 `shouldBe` 132
 --        it "finds the shortestPath from the start to collect all keys for example 4" $ do
---            shortestPath ex4 `shouldBe` []
+--            shortestPath2 ex4 `shouldBe`  []
         it "finds the shortestPath from the start to collect all keys for example 5" $ do
-            shortestPath ex5 `shouldBe` 81
+            shortestPath2 ex5 `shouldBe` 81
