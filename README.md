@@ -182,3 +182,7 @@ But for now, I'll implement the solution using the Haskell standard library.
 This first choice to make is how to store the maze. I could use an array or a map. In a language that supports array mutability, the array is probably the most efficient data structure, both in term of memory usage and speed. In Haskell, the choice is not that straightforward. I choose to use a 'Map' as it is probably as efficient as an immutable array and it has a richer interface.
 
 For my first tentative I used brute force which works for some of the examples (except the fourth one) so I tried something smarter, [Dijkstra's algorithm](https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm). Without any pruning it works but it takes a long time on the part 1.
+
+For part 2, I'm going to try to expand my solution: my initial plan was to use `(Set Char, Set Char)` for the key to the solution (instead of using `(Char, Set Char)`) so that I could use the first Set to store the current 4 keys and the second for the bag of keys.
+
+Then I realized that to start it was complicated as all start points are '@' so I replaced the 'Char' by its location and the key is now `(Set (Int,Int), Set Char)`.

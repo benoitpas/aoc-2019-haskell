@@ -42,31 +42,33 @@ findKeys area (sx,sy) bag prevLocations iDistance =
                     (True, False) -> [(c, nDistance, nsp)]
                     _ -> findKeys area nsp bag (S.insert nsp prevLocations) nDistance)
 
-type Todo = M.Map (Char, S.Set Char) (Int, (Int, Int))
-findKeys2 :: Area -> (Int, Int) -> S.Set Char -> Int -> Todo
+type Todo = M.Map (Point, S.Set Char) Int
+findKeys2 :: Area -> Point -> S.Set Char -> Int -> Todo
 findKeys2 area (sx,sy) bag iDistance =
-    let r = findKeys area (sx,sy) bag (S.fromList[(sx,sy)]) iDistance
-    in foldr (\(c,d,p) a -> let nd = case M.lookup (c, bag) a of
-                                                    Just (ad,_) -> min d ad
-                                                    _ -> d in M.insert (c,bag) (nd,p) a) M.empty r
+    let keys = findKeys area (sx,sy) bag (S.fromList[(sx,sy)]) iDistance
+    in foldr (\(c,d,p) a -> let nd = case M.lookup (p, bag) a of
+                                                    Just ad -> min d ad
+                                                    _ -> d in M.insert (p,bag) nd a) M.empty keys
 
-findNextNode :: Todo -> ((Char, S.Set Char),Int, (Int,Int))
+findNextNode :: Todo -> ((Point, S.Set Char), Int)
 findNextNode todo =
-    let l = L.sortOn (\(_,(d,_)) -> d) (M.toList todo) in
-    let (k,(d,p)) = head l
-    in (k,d,p)
+    let l = L.sortOn (\(_,d) -> d) (M.toList todo) in -- could be replaced by snd ?
+    let (k,d) = head l
+    in (k,d)
 
-type Done = M.Map (Char, S.Set Char) Int
+type Done = M.Map (Point, S.Set Char) Int
 nextNode :: Area -> (Todo, Done) -> (Todo, Done)
 nextNode area (todo,done) =
-    let (nkey,nd,np) = findNextNode todo in
-    let keys = findKeys2 area np (S.insert (fst nkey) (snd nkey)) nd in
+    let (nkey,nd) = findNextNode todo in
+    let (np, bag) = nkey in
+    let nbag = S.insert (checkLocation np area) bag in
+    let keys = findKeys2 area np nbag nd in
     let ndone = M.insert nkey nd done in
     let ntodo = M.delete nkey todo
-    in  M.foldrWithKey (\k (d,p) (td,dn) ->
+    in  M.foldrWithKey (\k d (td,dn) ->
         case (M.member k done, M.lookup k todo) of
-            (False, Nothing) -> (M.insert k (d,p) td,dn)
-            (False, Just (tdd, _)) -> (if d<tdd then M.insert k (d,p) td else td,dn)
+            (False, Nothing) -> (M.insert k d td,dn)
+            (False, Just tdd) -> (if d<tdd then M.insert k d td else td,dn)
             (_, _) -> (td,dn)) (ntodo, ndone) keys
     
 shortestPath :: [String] -> Int
