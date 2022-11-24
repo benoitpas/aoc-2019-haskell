@@ -186,3 +186,5 @@ For my first tentative I used brute force which works for some of the examples (
 For part 2, I'm going to try to expand my solution: my initial plan was to use `(Set Char, Set Char)` for the key to the solution (instead of using `(Char, Set Char)`) so that I could use the first Set to store the current 4 keys and the second for the bag of keys.
 
 Then I realized that to start it was complicated as all start points are '@' so I replaced the 'Char' by its location and the key is now `(Set (Int,Int), Set Char)`.
+
+So finally I implemented a solution for part 2 that generalizes the first one.

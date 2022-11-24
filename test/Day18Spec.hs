@@ -17,6 +17,7 @@ ex1 =
 ex1Map :: M.Map Point Char
 ex1Map = (toMap . toInts) ex1
 
+ex2 :: [String]
 ex2 =
    ["########################",
     "#f.D.E.e.C.b.A.@.a.B.c.#",
@@ -24,12 +25,14 @@ ex2 =
     "#d.....................#",
     "########################"]
  
+ex3 :: [String]
 ex3 = ["########################",
        "#...............b.C.D.f#",
        "#.######################",
        "#.....@.a.B.c.d.A.e.F.g#",
        "########################"]
 
+ex4 :: [String]
 ex4 = ["#################",
        "#i.G..c...e..H.p#",
        "########.########",
@@ -40,12 +43,49 @@ ex4 = ["#################",
        "#l.F..d...h..C.m#",
        "#################"]
 
+ex5 :: [String]
 ex5 = ["########################",
        "#@..............ac.GI.b#",
        "###d#e#f################",
        "###A#B#C################",
        "###g#h#i################",
        "########################"]
+
+ex21 :: [String]
+ex21 = ["#######",
+        "#a.#Cd#",
+        "##...##",
+        "##.@.##",
+        "##...##",
+        "#cB#Ab#",
+        "#######"]
+
+ex22 :: [String]
+ex22 = ["###############",
+        "#d.ABC.#.....a#",
+        "######@#@######",
+        "###############",
+        "######@#@######",
+        "#b.....#.....c#",
+        "###############"]
+
+ex23 = ["#############",
+        "#DcBa.#.GhKl#",
+        "#.###@#@#I###",
+        "#e#d#####j#k#",
+        "###C#@#@###J#",
+        "#fEbA.#.FgHi#",
+        "#############"]
+
+ex24 = ["#############",
+        "#g#f.D#..h#l#",
+        "#F###e#E###.#",
+        "#dCba@#@BcIJ#",
+        "#############",
+        "#nK.L@#@G...#",
+        "#M###N#H###.#",
+        "#o#m..#i#jk.#",
+        "#############"]
 
 spec :: Spec
 spec = do
@@ -61,23 +101,33 @@ spec = do
         it "finds the possible directions at a given location with a key in the bag" $ do
             possibleDirections ex1Map (6,1) (S.fromList ['a']) (S.fromList [(6,1)]) `shouldBe` [(1,0),(-1,0)]
 
-    describe "findKeys" $ do
+    describe "findKeysRec" $ do
         it "finds the available keys at a given location" $ do
-            findKeys ex1Map (5,1) S.empty (S.fromList [(5,1)]) 0 `shouldBe` [('a',2,(7,1))]
+            findKeysRec ex1Map (5,1) S.empty (S.fromList [(5,1)]) 0 `shouldBe` [('a',2,(7,1))]
         it "finds the available keys at a given location with an empty bag" $ do
-            findKeys ex1Map (6,1) S.empty (S.fromList [(6,1)]) 0 `shouldBe`  [('a',1, (7,1))]
+            findKeysRec ex1Map (6,1) S.empty (S.fromList [(6,1)]) 0 `shouldBe`  [('a',1, (7,1))]
         it "finds the available keys at a given location with a key in the bag" $ do
-            findKeys ex1Map (6,1) (S.fromList ['a']) (S.fromList [(6,1)]) 0 `shouldBe` [('b',5, (1,1))]
+            findKeysRec ex1Map (6,1) (S.fromList ['a']) (S.fromList [(6,1)]) 0 `shouldBe` [('b',5, (1,1))]
 
 
-    describe "shortestPath" $ do
-        it "finds the shortestPath from the start to collect all keys for example 1" $ do
-            shortestPath ex1 `shouldBe` 8
-        it "finds the shortestPath from the start to collect all keys for example 2" $ do
-            shortestPath ex2 `shouldBe` 86
-        it "finds the shortestPath from the start to collect all keys for example 3" $ do
-            shortestPath ex3 `shouldBe` 132
-        it "finds the shortestPath from the start to collect all keys for example 4" $ do
-            shortestPath ex4 `shouldBe`  136
-        it "finds the shortestPath from the start to collect all keys for example 5" $ do
-            shortestPath ex5 `shouldBe` 81
+    describe "shortestPath2" $ do
+        it "finds the shortest path from the start to collect all keys for example 1" $ do
+            shortestPath2 ex1 False `shouldBe` 8
+        it "finds the shortest ath from the start to collect all keys for example 2" $ do
+            shortestPath2 ex2 False`shouldBe` 86
+        it "finds the shortest path Path from the start to collect all keys for example 3" $ do
+            shortestPath2 ex3 False `shouldBe` 132
+        it "finds the shortest path from the start to collect all keys for example 4" $ do
+            shortestPath2 ex4 False `shouldBe` 136
+        it "finds the shortest path from the start to collect all keys for example 5" $ do
+            shortestPath2 ex5 False `shouldBe` 81
+        it "finds the shortest path from the start to collect all keys for example 21" $ do
+            shortestPath2 ex21 False `shouldBe` 34
+        it "finds the shortest path from the start to collect all keys for example 21 (puzzle 2 mode)" $ do
+            shortestPath2 ex21 True `shouldBe` 8
+        it "finds the shortest path from the start to collect all keys for example 22" $ do
+            shortestPath2 ex22 False `shouldBe` 24
+        it "finds the shortest path from the start to collect all keys for example 23" $ do
+            shortestPath2 ex23 False `shouldBe` 32
+        it "finds the shortest path from the start to collect all keys for example 24" $ do
+            shortestPath2 ex24 False `shouldBe` 72
