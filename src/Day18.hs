@@ -2,6 +2,7 @@ module Day18
     (
         possibleDirections,
         findKeysRec,
+        shortestPath,
         shortestPath2,
         run
     ) where
@@ -46,8 +47,8 @@ findKeysRec area (sx,sy) bag prevLocations iDistance =
 
 --type Todo = M.Map (Point, S.Set Char) Int
 --findKeys :: Area -> Point -> S.Set Char -> Int -> Todo
-findKeys area (sx,sy) bag iDistance =
-    let keys = findKeysRec area (sx,sy) bag (S.fromList[(sx,sy)]) iDistance
+findKeys area p bag iDistance =
+    let keys = findKeysRec area p bag (S.fromList [p]) iDistance
     in foldr (\(c,d,p) a -> let nd = case M.lookup (p, bag) a of
                                                     Just ad -> min d ad
                                                     _ -> d in M.insert (p,bag) nd a) M.empty keys
@@ -83,15 +84,17 @@ shortestPath l =
     let (_,r) = head $ L.sortOn  (\(_,d) -> d) (filter (\((_,bag),_) -> length bag == (nbKeys - 1)) (M.toList done))
     in r
 
-
 type Todo = M.Map (S.Set Point, S.Set Char) Int
 findKeys2 :: Area -> S.Set Point -> S.Set Char -> Int -> Todo
 findKeys2 area points bag iDistance =
     let r = foldr (\p a -> let keys = findKeysRec area p bag (S.fromList[p]) iDistance in
                            let points2 = S.delete p points
                            in foldr (\(c2,d2,p2) a2 -> let kp = S.insert p2 points2 in
-                                                       let kb = S.insert c2 bag 
-                                                       in M.insert (kp,kb) d2 a2) a keys) M.empty points 
+                                                       let kb = S.insert c2 bag in
+                                                       let maybeMin m = Just (case m of
+                                                                                Just v ->  (min v d2)
+                                                                                _ ->  d2)
+                                                       in M.alter maybeMin (kp,kb) a2) a keys) M.empty points
     in r
 
 type Done = M.Map (S.Set Point, S.Set Char) Int
@@ -125,9 +128,6 @@ shortestPath2 l part2 =
     let m = if part2 then addRobots im else im in
     let start = findStarts2 m in
     let todo = findKeys2 m start S.empty 0 in
---    (start,todo)
---    let l = iterate (nextNode m) (todo, M.fromList []) in
---        map (\(td,dn)-> (length td,length dn)) l
     let (_,done) = until (\(td,_) ->(length (M.elems td) == 0)) (nextNode2 m) (todo, M.fromList []) in
     let nbKeys = length $ filter isLower (M.elems m) in
     let (_,r) = head $ L.sortOn  (\(_,d) -> d) (filter (\((_,bag),_) -> length bag == nbKeys) (M.toList done))
@@ -136,9 +136,7 @@ shortestPath2 l part2 =
 run :: IO ()
 run = do
     content <- readFile "src/day18_input.txt"
-    putStrLn content
-    getCurrentTime >>= print
-    print ("puzzle 1: " ++ show (shortestPath (lines (content))))
+    print ("puzzle 1: " ++ show (shortestPath2 (lines (content)) False))
     getCurrentTime >>= print
     print ("puzzle 2: " ++ show (shortestPath2 (lines (content)) True))
     getCurrentTime >>= print

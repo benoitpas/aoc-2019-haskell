@@ -122,7 +122,9 @@ spec = do
         it "finds the shortest path from the start to collect all keys for example 5" $ do
             shortestPath2 ex5 False `shouldBe` 81
         it "finds the shortest path from the start to collect all keys for example 21" $ do
-            shortestPath2 ex21 False `shouldBe` 34
+            shortestPath ex21 `shouldBe` 26
+        it "finds the shortest path from the start to collect all keys for example 21" $ do
+            shortestPath2 ex21 False `shouldBe` 26
         it "finds the shortest path from the start to collect all keys for example 21 (puzzle 2 mode)" $ do
             shortestPath2 ex21 True `shouldBe` 8
         it "finds the shortest path from the start to collect all keys for example 22" $ do
