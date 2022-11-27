@@ -3,7 +3,6 @@ module Day18
         possibleDirections,
         findKeysRec,
         shortestPath,
-        shortestPath2,
         run
     ) where
 
@@ -44,49 +43,9 @@ findKeysRec area (sx,sy) bag prevLocations iDistance =
                     (True, False) -> [(c, nDistance, nsp)]
                     _ -> findKeysRec area nsp bag (S.insert nsp prevLocations) nDistance)
 
-
---type Todo = M.Map (Point, S.Set Char) Int
---findKeys :: Area -> Point -> S.Set Char -> Int -> Todo
-findKeys area p bag iDistance =
-    let keys = findKeysRec area p bag (S.fromList [p]) iDistance
-    in foldr (\(c,d,p) a -> let nd = case M.lookup (p, bag) a of
-                                                    Just ad -> min d ad
-                                                    _ -> d in M.insert (p,bag) nd a) M.empty keys
-
---findNextNode :: Todo -> ((Point, S.Set Char), Int)
-findNextNode todo =
-    let l = L.sortOn (\(_,d) -> d) (M.toList todo) in -- could be replaced by snd ?
-    let (k,d) = head l
-    in (k,d)
-
---type Done = M.Map (Point, S.Set Char) Int
---nextNode :: Area -> (Todo, Done) -> (Todo, Done)
-nextNode area (todo,done) =
-    let (nkey,nd) = findNextNode todo in
-    let (np, bag) = nkey in
-    let nbag = S.insert (checkLocation np area) bag in
-    let keys = findKeys area np nbag nd in
-    let ndone = M.insert nkey nd done in
-    let ntodo = M.delete nkey todo
-    in  M.foldrWithKey (\k d (td,dn) ->
-        case (M.member k done, M.lookup k todo) of
-            (False, Nothing) -> (M.insert k d td,dn)
-            (False, Just tdd) -> (if d<tdd then M.insert k d td else td,dn)
-            (_, _) -> (td,dn)) (ntodo, ndone) keys
-    
---shortestPath :: [String] -> Int
-shortestPath l =
-    let m = toMap (toInts l) in
-    let start = fst $ head $ M.toList (M.filterWithKey (\_ c -> c == '@') m) in
-    let todo = findKeys m start S.empty 0 in
-    let (_,done) = until (\(td,_) ->(length (M.elems td) == 0)) (nextNode m) (todo, M.fromList []) in
-    let nbKeys = length $ filter isLower (M.elems m) in
-    let (_,r) = head $ L.sortOn  (\(_,d) -> d) (filter (\((_,bag),_) -> length bag == (nbKeys - 1)) (M.toList done))
-    in r
-
 type Todo = M.Map (S.Set Point, S.Set Char) Int
-findKeys2 :: Area -> S.Set Point -> S.Set Char -> Int -> Todo
-findKeys2 area points bag iDistance =
+findKeys :: Area -> S.Set Point -> S.Set Char -> Int -> Todo
+findKeys area points bag iDistance =
     let r = foldr (\p a -> let keys = findKeysRec area p bag (S.fromList[p]) iDistance in
                            let points2 = S.delete p points
                            in foldr (\(c2,d2,p2) a2 -> let kp = S.insert p2 points2 in
@@ -98,45 +57,45 @@ findKeys2 area points bag iDistance =
     in r
 
 type Done = M.Map (S.Set Point, S.Set Char) Int
-nextNode2 :: Area -> (Todo, Done) -> (Todo, Done)
-nextNode2 area (todo,done) =
+nextNode :: Area -> (Todo, Done) -> (Todo, Done)
+nextNode area (todo,done) =
     let (nkey,nd) = head $ L.sortOn snd (M.toList todo) in
     let (np, bag) = nkey in
-    let keys = findKeys2 area np bag nd in
+    let keys = findKeys area np bag nd in
     let ndone = M.insert nkey nd done in
     let ntodo = M.delete nkey todo
     in  M.foldrWithKey (\k d (td,dn) ->
         case (M.member k done, M.lookup k todo) of
-            (False, Nothing) -> (M.insert k d td,dn)
-            (False, Just tdd) -> (if d<tdd then M.insert k d td else td,dn)
-            (_, _) -> (td,dn)) (ntodo, ndone) keys
+            (False, Nothing)    -> (M.insert k d td,dn)
+            (False, Just tdd)   -> (if d<tdd then M.insert k d td else td,dn)
+            _                   -> (td,dn)) (ntodo, ndone) keys
 
 addRobots :: M.Map Point Char -> M.Map Point Char
 addRobots m = 
-    let (x,y) = S.elemAt 0 $ findStarts2 m in
+    let (x,y) = S.elemAt 0 $ findStarts m in
     let patch = [(-1,-1,'@'),( 0, -1,'#'),(1,-1,'@'),
                  (-1, 0,'#'),( 0,  0,'#'),(1, 0,'#'),
                  (-1, 1,'@'),( 0,  1,'#'),(1, 1,'@')]
     in foldr (\(dx,dy,c) a -> M.insert (x+dx,y+dy) c a) m patch
 
-findStarts2 :: M.Map Point Char -> S.Set Point
-findStarts2 m = S.fromList $ map fst  (M.toList (M.filterWithKey (\_ c -> c == '@') m))
+findStarts :: M.Map Point Char -> S.Set Point
+findStarts m = S.fromList $ map fst  (M.toList (M.filterWithKey (\_ c -> c == '@') m))
 
-shortestPath2 :: [String] -> Bool -> Int
-shortestPath2 l part2 =
+shortestPath :: [String] -> Bool -> Int
+shortestPath l part2 =
     let im = toMap (toInts l) in
     let m = if part2 then addRobots im else im in
-    let start = findStarts2 m in
-    let todo = findKeys2 m start S.empty 0 in
-    let (_,done) = until (\(td,_) ->(length (M.elems td) == 0)) (nextNode2 m) (todo, M.fromList []) in
+    let start = findStarts m in
+    let todo = findKeys m start S.empty 0 in
+    let (_,done) = until (\(td,_) ->(length (M.elems td) == 0)) (nextNode m) (todo, M.fromList []) in
     let nbKeys = length $ filter isLower (M.elems m) in
-    let (_,r) = head $ L.sortOn  (\(_,d) -> d) (filter (\((_,bag),_) -> length bag == nbKeys) (M.toList done))
+    let (_,r) = head $ L.sortOn snd (filter (\((_,bag),_) -> length bag == nbKeys) (M.toList done))
     in r
 
 run :: IO ()
 run = do
     content <- readFile "src/day18_input.txt"
-    print ("puzzle 1: " ++ show (shortestPath2 (lines (content)) False))
+    print ("puzzle 1: " ++ show (shortestPath (lines (content)) False))
     getCurrentTime >>= print
-    print ("puzzle 2: " ++ show (shortestPath2 (lines (content)) True))
+    print ("puzzle 2: " ++ show (shortestPath (lines (content)) True))
     getCurrentTime >>= print

@@ -69,6 +69,8 @@ ex22 = ["###############",
         "#b.....#.....c#",
         "###############"]
 
+
+ex23 :: [String]
 ex23 = ["#############",
         "#DcBa.#.GhKl#",
         "#.###@#@#I###",
@@ -77,6 +79,7 @@ ex23 = ["#############",
         "#fEbA.#.FgHi#",
         "#############"]
 
+ex24 :: [String]
 ex24 = ["#############",
         "#g#f.D#..h#l#",
         "#F###e#E###.#",
@@ -110,26 +113,24 @@ spec = do
             findKeysRec ex1Map (6,1) (S.fromList ['a']) (S.fromList [(6,1)]) 0 `shouldBe` [('b',5, (1,1))]
 
 
-    describe "shortestPath2" $ do
+    describe "shortestPath" $ do
         it "finds the shortest path from the start to collect all keys for example 1" $ do
-            shortestPath2 ex1 False `shouldBe` 8
+            shortestPath ex1 False `shouldBe` 8
         it "finds the shortest ath from the start to collect all keys for example 2" $ do
-            shortestPath2 ex2 False`shouldBe` 86
+            shortestPath ex2 False`shouldBe` 86
         it "finds the shortest path Path from the start to collect all keys for example 3" $ do
-            shortestPath2 ex3 False `shouldBe` 132
+            shortestPath ex3 False `shouldBe` 132
         it "finds the shortest path from the start to collect all keys for example 4" $ do
-            shortestPath2 ex4 False `shouldBe` 136
+            shortestPath ex4 False `shouldBe` 136
         it "finds the shortest path from the start to collect all keys for example 5" $ do
-            shortestPath2 ex5 False `shouldBe` 81
+            shortestPath ex5 False `shouldBe` 81
         it "finds the shortest path from the start to collect all keys for example 21" $ do
-            shortestPath ex21 `shouldBe` 26
-        it "finds the shortest path from the start to collect all keys for example 21" $ do
-            shortestPath2 ex21 False `shouldBe` 26
+            shortestPath ex21 False `shouldBe` 26
         it "finds the shortest path from the start to collect all keys for example 21 (puzzle 2 mode)" $ do
-            shortestPath2 ex21 True `shouldBe` 8
+            shortestPath ex21 True `shouldBe` 8
         it "finds the shortest path from the start to collect all keys for example 22" $ do
-            shortestPath2 ex22 False `shouldBe` 24
+            shortestPath ex22 False `shouldBe` 24
         it "finds the shortest path from the start to collect all keys for example 23" $ do
-            shortestPath2 ex23 False `shouldBe` 32
+            shortestPath ex23 False `shouldBe` 32
         it "finds the shortest path from the start to collect all keys for example 24" $ do
-            shortestPath2 ex24 False `shouldBe` 72
+            shortestPath ex24 False `shouldBe` 72

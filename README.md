@@ -187,4 +187,4 @@ For part 2, I'm going to try to expand my solution: my initial plan was to use `
 
 Then I realized that to start it was complicated as all start points are '@' so I replaced the 'Char' by its location and the key is now `(Set (Int,Int), Set Char)`.
 
-So finally I implemented a solution for part 2 that generalizes the first one.
+So finally I implemented a solution for part 2 that generalizes the first one. After a bug fix, the solution for part 2 also works for part 1, which I think is very nice implementation.
