@@ -29,7 +29,7 @@ This was mostly about setting up the environment and understanding how to use th
 Here I mostly learnt how to use Array in Haskell, no issues with this puzzle. Compared to the Scala version (https://github.com/benoitpas/Advent-of-Code-2019/blob/master/src/main/scala/Day2.scala), it is a bit more verbose because of the array syntax (and I a lot more comfortable with Scala so the Haskell version can probably be improved a lot).
 
 # Day 3
-Here things start to get interested, the first solution I implemented does noy finish with the full scale puzzle. Without looking at it, I created a solution very similar to https://github.com/benoitpas/Advent-of-Code-2019/blob/master/src/main/scala/Day3.scala where I first create a list of points and convert it to a set to find the intersection.
+Here things start to get interesting, the first solution I implemented does noy finish with the full scale puzzle. Without looking at it, I created a solution very similar to https://github.com/benoitpas/Advent-of-Code-2019/blob/master/src/main/scala/Day3.scala where I first create a list of points and convert it to a set to find the intersection.
 
 For the first list (around 150000 elements), the conversion from List to Set does not finish after running for more than a minute.
 Looking into the [documentation](https://hackage.haskell.org/package/containers-0.6.6/docs/Data-Set.html), it turns out that balanced binary trees. It is probably better to use a [HashSet](https://hackage.haskell.org/package/unordered-containers-0.2.19.1/docs/Data-HashSet.html) instead.
