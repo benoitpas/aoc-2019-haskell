@@ -179,7 +179,7 @@ So we have here another puzzle with a maze. Maybe I should try to solve some of 
 
 But for now, I'll implement the solution using the Haskell standard library.
 
-This first choice to make is how to store the maze. I could use an array or a map. In a language that supports array mutability, the array is probably the most efficient data structure, both in term of memory usage and speed. In Haskell, the choice is not that straightforward. I choose to use a 'Map' as it is probably as efficient as an immutable array and it has a richer interface.
+The first choice to make is how to store the maze. I could use an array or a map. In a language that supports array mutability, the array is probably the most efficient data structure, both in term of memory usage and speed. In Haskell, the choice is not that straightforward. I choose to use a 'Map' as it is probably as efficient as an immutable array and it has a richer interface.
 
 For my first tentative I used brute force which works for some of the examples (except the fourth one) so I tried something smarter, [Dijkstra's algorithm](https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm). Without any pruning it works but it takes a long time on the part 1.
 
